@@ -1,0 +1,209 @@
+<div
+  class="login-root relative flex min-h-dvh flex-col overflow-hidden bg-slate-50 text-slate-900 lg:flex-row"
+  [style.--bm-accent-rgb]="env.brand.accentRgb"
+  [style.--bm-accent-strong-rgb]="env.brand.accentStrongRgb"
+>
+  <div
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-100/70 via-slate-50 to-white"
+  ></div>
+  <div
+    class="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full blur-3xl"
+    style="background-color: rgb(var(--bm-accent-rgb) / 0.12)"
+  ></div>
+  <div
+    class="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full blur-3xl"
+    style="background-color: rgb(var(--bm-accent-strong-rgb) / 0.08)"
+  ></div>
+
+  <section
+    class="bm-reveal-left relative z-10 flex flex-1 flex-col justify-between px-8 py-10 sm:px-12 lg:max-w-xl lg:py-14"
+  >
+    <div>
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-11 w-11 items-center justify-center rounded-xl text-slate-950 shadow-lg"
+          style="
+            background: linear-gradient(
+              135deg,
+              rgb(var(--bm-accent-rgb)),
+              rgb(var(--bm-accent-strong-rgb))
+            );
+            box-shadow: 0 12px 40px rgb(var(--bm-accent-rgb) / 0.35);
+          "
+        >
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M4 10V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V10"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+            />
+            <path
+              d="M2 9L12 3L22 9"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M9 20V12H15V20"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium uppercase tracking-[0.2em]"
+            style="color: rgb(var(--bm-accent-rgb) / 0.95)"
+          >
+            Bank Management
+          </p>
+          <p class="text-lg font-semibold tracking-tight text-slate-900">
+            Conta cliente
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-14 max-w-md space-y-4">
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+          Crie o seu acesso em poucos passos
+        </h1>
+        <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+          Os dados são enviados para <code class="rounded bg-slate-200 px-1 py-0.5 text-xs">{{ env.apiBaseUrl
+          }}{{ env.auth.registerPath }}</code>. Depois de registar, inicie sessão com o mesmo email.
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-10 text-xs text-slate-500 lg:mt-0">
+      © {{ currentYear }} Bank Management · Ambiente de demonstração
+    </p>
+  </section>
+
+  <section class="relative z-10 flex flex-1 items-center justify-center px-4 py-10 sm:px-8 lg:py-14">
+    <div
+      class="bm-reveal-card w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/10 sm:p-8"
+    >
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-slate-900">Registar</h2>
+        <p class="mt-1 text-sm text-slate-600">
+          Preencha os campos para criar uma conta de cliente.
+        </p>
+      </div>
+
+      <form class="space-y-5" (ngSubmit)="onSubmit()" [formGroup]="form" novalidate>
+        <div class="space-y-2">
+          <label for="reg-full-name" class="text-sm font-medium text-slate-700"
+            >Nome completo</label
+          >
+          <input
+            id="reg-full-name"
+            type="text"
+            autocomplete="name"
+            formControlName="fullName"
+            class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none ring-emerald-500/40 transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2"
+            placeholder="O seu nome"
+          />
+          @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+            <p class="text-xs text-rose-600">Indique pelo menos 2 caracteres.</p>
+          }
+        </div>
+
+        <div class="space-y-2">
+          <label for="reg-email" class="text-sm font-medium text-slate-700">Email</label>
+          <input
+            id="reg-email"
+            type="email"
+            autocomplete="email"
+            formControlName="email"
+            class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none ring-emerald-500/40 transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2"
+            placeholder="nome@empresa.pt"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="text-xs text-rose-600">Introduza um email válido.</p>
+          }
+        </div>
+
+        <div class="space-y-2">
+          <app-password-reveal-field
+            label="Palavra-passe"
+            labelAria="palavra-passe"
+            inputId="reg-password"
+            [control]="form.controls.password"
+            autocomplete="new-password"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="text-xs text-rose-600">Mínimo de 6 caracteres.</p>
+          }
+        </div>
+
+        <div class="space-y-2">
+          <app-password-reveal-field
+            label="Confirmar palavra-passe"
+            labelAria="confirmação da palavra-passe"
+            inputId="reg-confirm-password"
+            [control]="form.controls.confirmPassword"
+            autocomplete="new-password"
+          />
+          @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
+            <p class="text-xs text-rose-600">Confirme a palavra-passe.</p>
+          }
+          @if (
+            form.touched &&
+            form.hasError('passwordMismatch') &&
+            form.controls.confirmPassword.touched
+          ) {
+            <p class="text-xs text-rose-600">As palavras-passe não coincidem.</p>
+          }
+        </div>
+
+        @if (error()) {
+          <p
+            class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-800"
+            role="alert"
+          >
+            {{ error() }}
+          </p>
+        }
+
+        <button
+          type="submit"
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/25 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <svg
+              class="h-4 w-4 shrink-0 animate-spin"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span>A registar…</span>
+          } @else {
+            <span>Criar conta</span>
+          }
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-slate-600">
+        Já tem conta?
+        <a
+          routerLink="/login"
+          class="font-medium text-emerald-700 hover:text-emerald-800"
+          >Iniciar sessão</a
+        >
+      </p>
+    </div>
+  </section>
+</div>

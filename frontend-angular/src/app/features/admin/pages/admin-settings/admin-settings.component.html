@@ -1,0 +1,274 @@
+<div class="relative -mx-4 min-h-full pb-12 sm:-mx-6 lg:-mx-10">
+  <div
+    class="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-violet-500/30 via-indigo-400/20 to-transparent blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute -left-20 top-40 h-64 w-64 rounded-full bg-fuchsia-400/20 blur-3xl"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
+      <a routerLink="/admin" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
+      <span aria-hidden="true">/</span>
+      <span class="rounded-lg bg-violet-50 px-2 py-1 font-medium text-violet-800 ring-1 ring-violet-200/80">Configurações</span>
+    </nav>
+
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Configurações da consola</h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+          Preferências locais da área administrativa: idioma, densidade visual e alertas operacionais.
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-4 shadow-sm backdrop-blur-sm ring-1 ring-violet-500/10"
+      >
+        <div
+          class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-900/20"
+          aria-hidden="true"
+        >
+          <i class="pi pi-cog text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-violet-700">Preferências</p>
+          <p class="text-sm font-semibold text-slate-900">Apenas neste browser</p>
+          <p class="text-xs text-slate-500">Sincronizar com o backend quando existir API.</p>
+        </div>
+      </div>
+    </div>
+
+    @if (savedMessage()) {
+      <div
+        class="mt-8 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm"
+        role="status"
+      >
+        <i class="pi pi-check-circle mt-0.5" aria-hidden="true"></i>
+        <span>{{ savedMessage() }}</span>
+      </div>
+    }
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <section
+        class="lg:col-span-2 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/[0.05]"
+      >
+        <div class="border-b border-slate-100 bg-gradient-to-r from-violet-50/60 via-white to-indigo-50/40 px-6 py-5 sm:px-8">
+          <h2 class="text-lg font-semibold text-slate-900">Aplicação</h2>
+          <p class="mt-1 text-sm text-slate-600">Idioma da interface e densidade das listas.</p>
+        </div>
+        <div class="space-y-6 px-6 py-7 sm:px-8">
+          <form [formGroup]="appForm" class="space-y-6">
+            <div>
+              <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Idioma</label>
+              <div class="relative" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-900 transition hover:border-slate-300"
+                  [class.border-violet-500]="languageMenuOpen()"
+                  [class.ring-4]="languageMenuOpen()"
+                  [class.ring-violet-500/15]="languageMenuOpen()"
+                  (click)="toggleLanguageMenu()"
+                >
+                  <span class="flex items-center gap-2">
+                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-xs">{{
+                      selectedLanguage().flag
+                    }}</span>
+                    {{ selectedLanguage().label }}
+                  </span>
+                  <i
+                    class="pi pi-chevron-down text-xs text-slate-400 transition"
+                    [class.rotate-180]="languageMenuOpen()"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+
+                @if (languageMenuOpen()) {
+                  <div class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-slate-900/5">
+                    @for (opt of languageOptions; track opt.value) {
+                      <button
+                        type="button"
+                        class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-800 transition hover:bg-slate-50"
+                        [class.bg-violet-50]="appForm.controls.language.value === opt.value"
+                        [class.text-violet-700]="appForm.controls.language.value === opt.value"
+                        (click)="pickLanguage(opt.value)"
+                      >
+                        <span class="flex items-center gap-2">
+                          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-xs">{{
+                            opt.flag
+                          }}</span>
+                          {{ opt.label }}
+                        </span>
+                        @if (appForm.controls.language.value === opt.value) {
+                          <i class="pi pi-check text-xs text-violet-600" aria-hidden="true"></i>
+                        }
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Densidade das listas</label>
+              <div class="grid grid-cols-2 gap-2">
+                @for (opt of densityOptions; track opt.value) {
+                  <button
+                    type="button"
+                    class="flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition"
+                    [class.border-violet-500]="appForm.controls.density.value === opt.value"
+                    [class.bg-violet-50]="appForm.controls.density.value === opt.value"
+                    [class.border-slate-200]="appForm.controls.density.value !== opt.value"
+                    [class.bg-slate-50/80]="appForm.controls.density.value !== opt.value"
+                    (click)="pickDensity(opt.value)"
+                  >
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-200">
+                      <i class="pi text-xs text-slate-600" [class]="opt.icon" aria-hidden="true"></i>
+                    </span>
+                    <span class="flex-1">
+                      <span class="block text-sm font-medium text-slate-900">{{ opt.label }}</span>
+                      <span class="block text-xs text-slate-500">{{ opt.hint }}</span>
+                    </span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:brightness-105"
+              (click)="saveSection('Aplicação')"
+            >
+              <i class="pi pi-save text-xs" aria-hidden="true"></i>
+              Guardar aplicação
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <aside class="flex flex-col gap-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/[0.04]">
+          <h2 class="text-base font-semibold text-slate-900">Dicas rápidas</h2>
+          <ul class="mt-4 space-y-3 text-sm text-slate-600">
+            <li class="flex gap-2">
+              <span class="font-semibold text-violet-700">·</span>
+              O idioma escolhido pode ser alinhado com traduções da API quando existirem ficheiros i18n.
+            </li>
+            <li class="flex gap-2">
+              <span class="font-semibold text-violet-700">·</span>
+              A densidade afeta as tabelas de empregados e logs de auditoria (quando ligado).
+            </li>
+            <li class="flex gap-2">
+              <span class="font-semibold text-violet-700">·</span>
+              Credenciais e dispositivos: em
+              <a routerLink="/admin/account-management" class="font-semibold text-violet-700 underline-offset-4 hover:underline">Gestionar conta</a>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-fuchsia-200/80 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50/40 p-6">
+          <h2 class="text-base font-semibold text-slate-900">Outras áreas</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Perfil pessoal e segurança da conta têm páginas dedicadas com o mesmo tipo de layout.
+          </p>
+          <div class="mt-4 flex flex-col gap-2">
+            <a
+              routerLink="/admin/profile"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-800"
+            >
+              Personalizar perfil
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+            <a
+              routerLink="/admin/account-management"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-800"
+            >
+              Gestionar conta
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section
+      class="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/[0.05]"
+    >
+      <div class="border-b border-slate-100 bg-gradient-to-r from-violet-50/60 via-white to-indigo-50/40 px-6 py-5 sm:px-8">
+        <h2 class="text-lg font-semibold text-slate-900">Alertas operacionais</h2>
+        <p class="mt-1 text-sm text-slate-600">Notificações da consola administrativa — apenas pré-visualização.</p>
+      </div>
+      <div class="space-y-3 px-6 py-7 sm:px-8" [formGroup]="appForm">
+        <button
+          type="button"
+          class="flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition"
+          [class.border-violet-300]="appForm.controls.auditAlerts.value"
+          [class.bg-violet-50/60]="appForm.controls.auditAlerts.value"
+          [class.border-slate-200]="!appForm.controls.auditAlerts.value"
+          [class.bg-slate-50/50]="!appForm.controls.auditAlerts.value"
+          (click)="appForm.controls.auditAlerts.setValue(!appForm.controls.auditAlerts.value)"
+        >
+          <span>
+            <span class="block text-sm font-semibold text-slate-900">Alertas de auditoria</span>
+            <span class="mt-0.5 block text-xs text-slate-600">Receber notificações ao detectar operações sensíveis.</span>
+          </span>
+          <span
+            class="relative h-7 w-12 shrink-0 rounded-full transition"
+            [class.bg-violet-600]="appForm.controls.auditAlerts.value"
+            [class.bg-slate-300]="!appForm.controls.auditAlerts.value"
+            aria-hidden="true"
+          >
+            <span
+              class="absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform"
+              [class.translate-x-5]="appForm.controls.auditAlerts.value"
+            ></span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition"
+          [class.border-indigo-300]="appForm.controls.weeklyDigest.value"
+          [class.bg-indigo-50/60]="appForm.controls.weeklyDigest.value"
+          [class.border-slate-200]="!appForm.controls.weeklyDigest.value"
+          [class.bg-slate-50/50]="!appForm.controls.weeklyDigest.value"
+          (click)="appForm.controls.weeklyDigest.setValue(!appForm.controls.weeklyDigest.value)"
+        >
+          <span>
+            <span class="block text-sm font-semibold text-slate-900">Resumo semanal</span>
+            <span class="mt-0.5 block text-xs text-slate-600">Email com KPIs e novos empregados registados na semana.</span>
+          </span>
+          <span
+            class="relative h-7 w-12 shrink-0 rounded-full transition"
+            [class.bg-indigo-600]="appForm.controls.weeklyDigest.value"
+            [class.bg-slate-300]="!appForm.controls.weeklyDigest.value"
+            aria-hidden="true"
+          >
+            <span
+              class="absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform"
+              [class.translate-x-5]="appForm.controls.weeklyDigest.value"
+            ></span>
+          </span>
+        </button>
+
+        <div class="pt-2">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            (click)="saveSection('Alertas')"
+          >
+            <i class="pi pi-bell text-xs" aria-hidden="true"></i>
+            Guardar alertas
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <p class="mt-8 text-center text-xs text-slate-500">
+      Para credenciais e sessões,
+      <a routerLink="/admin/account-management" class="font-semibold text-violet-700 underline-offset-4 hover:underline">Gestionar conta</a>
+      · Para avatar e contactos,
+      <a routerLink="/admin/profile" class="font-semibold text-violet-700 underline-offset-4 hover:underline">Personalizar perfil</a>.
+    </p>
+  </div>
+</div>

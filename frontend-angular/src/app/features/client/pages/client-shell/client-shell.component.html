@@ -1,0 +1,199 @@
+﻿<div class="flex min-h-dvh flex-col bg-slate-100 text-slate-900 md:flex-row">
+  <aside
+    class="flex shrink-0 flex-col border-r border-slate-200 bg-white text-slate-900 transition-[width] duration-200 ease-out md:sticky md:top-0 md:h-dvh"
+    [ngClass]="sidebarCollapsed() ? 'w-[4.75rem]' : 'w-full md:w-64'"
+  >
+    <div class="border-b border-slate-200 px-2 py-3" [class.px-3]="!sidebarCollapsed()" [class.py-4]="!sidebarCollapsed()">
+      <button
+        type="button"
+        class="group flex w-full items-center gap-2 rounded-xl border border-transparent p-1.5 text-left transition hover:border-slate-200/80 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+        [class.flex-col]="sidebarCollapsed()"
+        [class.items-center]="sidebarCollapsed()"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.gap-3]="!sidebarCollapsed()"
+        [attr.aria-pressed]="sidebarCollapsed()"
+        [attr.aria-expanded]="!sidebarCollapsed()"
+        [attr.aria-label]="
+          sidebarCollapsed()
+            ? 'Expandir menu lateral: mostrar nomes dos itens'
+            : 'Recolher menu lateral: mostrar só ícones'
+        "
+        [title]="sidebarCollapsed() ? 'Clicar para mostrar texto do menu' : 'Clicar para mostrar só ícones'"
+        (click)="toggleSidebar()"
+      >
+        <span
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-emerald-950 shadow-lg shadow-emerald-900/40 transition group-hover:brightness-105"
+          aria-hidden="true"
+        >
+          BM
+        </span>
+        @if (!sidebarCollapsed()) {
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-semibold tracking-tight text-slate-900">Bank Management</p>
+            <p class="text-xs text-slate-500">Internet banking</p>
+          </div>
+        }
+      </button>
+    </div>
+
+    <nav
+      class="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2"
+      [class.p-3]="!sidebarCollapsed()"
+      aria-label="Navegação cliente"
+    >
+      <a
+        routerLink="/client"
+        routerLinkActive="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.px-3]="!sidebarCollapsed()"
+        [class.px-0]="sidebarCollapsed()"
+        aria-label="Painel"
+        title="Painel"
+      >
+        <i class="pi pi-home shrink-0 text-base" aria-hidden="true"></i>
+        @if (!sidebarCollapsed()) {
+          <span class="truncate">Painel</span>
+        }
+      </a>
+      <a
+        routerLink="/client/accounts"
+        routerLinkActive="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        class="flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.px-3]="!sidebarCollapsed()"
+        [class.px-0]="sidebarCollapsed()"
+        aria-label="Contas"
+        title="Contas"
+      >
+        <i class="pi pi-credit-card shrink-0 text-base" aria-hidden="true"></i>
+        @if (!sidebarCollapsed()) {
+          <span class="truncate">Contas</span>
+        }
+      </a>
+      <a
+        routerLink="/client/profile"
+        routerLinkActive="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        class="flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.px-3]="!sidebarCollapsed()"
+        [class.px-0]="sidebarCollapsed()"
+        aria-label="Personalizar perfil"
+        title="Personalizar perfil"
+      >
+        <i class="pi pi-user-edit shrink-0 text-base" aria-hidden="true"></i>
+        @if (!sidebarCollapsed()) {
+          <span class="truncate">Personalizar perfil</span>
+        }
+      </a>
+      <a
+        routerLink="/client/account-management"
+        routerLinkActive="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        class="flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.px-3]="!sidebarCollapsed()"
+        [class.px-0]="sidebarCollapsed()"
+        aria-label="Gestionar conta"
+        title="Gestionar conta"
+      >
+        <i class="pi pi-shield shrink-0 text-base" aria-hidden="true"></i>
+        @if (!sidebarCollapsed()) {
+          <span class="truncate">Gestionar conta</span>
+        }
+      </a>
+      <a
+        routerLink="/client/settings"
+        routerLinkActive="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        class="flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        [class.justify-center]="sidebarCollapsed()"
+        [class.px-3]="!sidebarCollapsed()"
+        [class.px-0]="sidebarCollapsed()"
+        aria-label="Configurações"
+        title="Configurações"
+      >
+        <i class="pi pi-cog shrink-0 text-base" aria-hidden="true"></i>
+        @if (!sidebarCollapsed()) {
+          <span class="truncate">Configurações</span>
+        }
+      </a>
+    </nav>
+
+    <div class="border-t border-slate-200 p-2" [class.p-3]="!sidebarCollapsed()">
+      @if (user(); as u) {
+        <div
+          class="rounded-xl bg-slate-50 ring-1 ring-slate-200"
+          [class.p-3]="!sidebarCollapsed()"
+          [class.p-2]="sidebarCollapsed()"
+        >
+          <div
+            class="flex items-center gap-3"
+            [class.flex-col]="sidebarCollapsed()"
+            [class.justify-center]="sidebarCollapsed()"
+          >
+            @if (u.avatarDataUrl) {
+              <img
+                [src]="u.avatarDataUrl"
+                alt=""
+                class="shrink-0 rounded-full object-cover ring-2 ring-emerald-100"
+                [class.h-11]="!sidebarCollapsed()"
+                [class.w-11]="!sidebarCollapsed()"
+                [class.h-10]="sidebarCollapsed()"
+                [class.w-10]="sidebarCollapsed()"
+              />
+            } @else {
+              <div
+                class="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-300 to-teal-400 text-sm font-semibold text-emerald-950 ring-2 ring-emerald-100"
+                [class.h-11]="!sidebarCollapsed()"
+                [class.w-11]="!sidebarCollapsed()"
+                [class.h-10]="sidebarCollapsed()"
+                [class.w-10]="sidebarCollapsed()"
+                [class.text-xs]="sidebarCollapsed()"
+              >
+                {{ profileInitial(u) }}
+              </div>
+            }
+            @if (!sidebarCollapsed()) {
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-slate-900">{{ profileName(u) }}</p>
+                <p class="truncate text-xs text-slate-500">{{ u.email }}</p>
+              </div>
+            }
+          </div>
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 bg-white font-medium text-slate-700 transition hover:bg-slate-100"
+            [class.mt-3]="!sidebarCollapsed()"
+            [class.mt-2]="sidebarCollapsed()"
+            [class.w-full]="!sidebarCollapsed()"
+            [class.px-3]="!sidebarCollapsed()"
+            [class.py-2]="!sidebarCollapsed()"
+            [class.p-2]="sidebarCollapsed()"
+            [class.mx-auto]="sidebarCollapsed()"
+            [class.block]="sidebarCollapsed()"
+            [class.text-xs]="!sidebarCollapsed()"
+            [class.inline-flex]="sidebarCollapsed()"
+            [class.items-center]="sidebarCollapsed()"
+            [class.justify-center]="sidebarCollapsed()"
+            (click)="logout()"
+            title="Terminar sessão"
+            aria-label="Terminar sessão"
+          >
+            @if (sidebarCollapsed()) {
+              <i class="pi pi-sign-out text-base" aria-hidden="true"></i>
+              <span class="sr-only">Terminar sessão</span>
+            } @else {
+              Terminar sessão
+            }
+          </button>
+        </div>
+      }
+    </div>
+  </aside>
+
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+    <main class="flex-1 overflow-auto px-4 py-6 sm:px-8 sm:py-8">
+      <router-outlet />
+    </main>
+  </div>
+</div>

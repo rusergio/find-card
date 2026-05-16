@@ -1,0 +1,393 @@
+﻿<div class="relative -mx-4 min-h-full pb-12 sm:-mx-6 lg:-mx-10">
+  <div
+    class="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-slate-600/35 via-emerald-500/30 to-teal-400/15 blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute -left-16 top-24 h-72 w-72 rounded-full bg-gradient-to-tr from-emerald-500/35 via-teal-400/25 to-transparent blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute left-1/3 bottom-12 h-52 w-52 -translate-x-1/2 rounded-full bg-teal-400/18 blur-3xl"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
+      <span class="rounded-lg bg-emerald-50 px-2 py-1 font-medium text-emerald-800 ring-1 ring-emerald-200/80">Painel</span>
+    </nav>
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Painel do cliente</h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+          Saldo, operações e movimentos num só lugar — mesmo fundo em blobs e cabeçalho que Contas, Perfil e Configurações.
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-4 shadow-sm backdrop-blur-sm ring-1 ring-emerald-500/10"
+      >
+        <div
+          class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-700 to-emerald-700 text-white shadow-lg shadow-emerald-900/25"
+          aria-hidden="true"
+        >
+          <i class="pi pi-chart-line text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Resumo</p>
+          <p class="text-sm font-semibold text-slate-900">Ambiente de demonstração</p>
+          <p class="text-xs text-slate-500">Saldos e movimentos simulados na UI.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 space-y-8">
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+      <h3 class="text-sm font-semibold text-slate-700">Saldo total</h3>
+      <p class="text-3xl font-semibold text-slate-900">
+        {{ banking.totalBalance() | currency: 'EUR':'symbol':'1.2-2':'pt-PT' }}
+      </p>
+      <p class="mt-2 text-sm text-slate-600">Soma de todas as contas disponíveis.</p>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+      <h3 class="text-sm font-semibold text-slate-700">Contas</h3>
+      <p class="text-3xl font-semibold text-slate-900">{{ banking.accounts().length }}</p>
+      <a
+        routerLink="/client/accounts"
+        class="mt-3 inline-flex text-sm font-medium text-emerald-700 hover:text-emerald-800"
+      >
+        Ver detalhes →
+      </a>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03] sm:col-span-2 lg:col-span-1">
+      <h3 class="text-sm font-semibold text-slate-700">Perfil ativo</h3>
+      @if (auth.user(); as u) {
+        <p class="text-sm text-slate-700">
+          Bem-vindo,
+          <span class="font-semibold text-slate-900">{{ u.fullName?.trim() || u.displayName }}</span>.
+        </p>
+        <p class="mt-1 text-xs text-slate-500">{{ u.email }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <div class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-emerald-50/40 px-6 py-5 sm:px-8">
+        <h2 class="text-lg font-semibold text-slate-900">Saldo por conta</h2>
+        <p class="mt-1 text-sm text-slate-600">Gráfico em anel com a repartição do saldo total entre as suas contas.</p>
+      </div>
+      <div class="flex flex-col items-center gap-8 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:p-8">
+        <div class="relative shrink-0">
+          <svg
+            class="h-52 w-52 drop-shadow-sm"
+            viewBox="0 0 200 200"
+            role="img"
+            aria-label="Gráfico circular da repartição do saldo por conta"
+          >
+            @for (slice of balanceDonutSlices(); track $index) {
+              <path [attr.d]="slice.path" [attr.fill]="slice.color" class="transition-opacity hover:opacity-90" />
+            }
+            @if (balanceDonutSlices().length === 0) {
+              <circle cx="100" cy="100" r="56" class="fill-slate-100" />
+              <text x="100" y="104" text-anchor="middle" class="fill-slate-400 text-[11px] font-medium">Sem dados</text>
+            }
+          </svg>
+          <div
+            class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
+            aria-hidden="true"
+          >
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Total</p>
+            <p class="text-lg font-semibold tabular-nums text-slate-900 sm:text-xl">
+              {{ banking.totalBalance() | currency: 'EUR':'symbol':'1.0-0':'pt-PT' }}
+            </p>
+          </div>
+        </div>
+        <ul class="w-full min-w-0 flex-1 space-y-3 sm:max-w-[14rem]" aria-label="Legenda do gráfico">
+          @for (slice of balanceDonutSlices(); track $index) {
+            <li class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+              <div class="flex min-w-0 items-center gap-2">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full ring-1 ring-slate-900/10" [style.background]="slice.color"></span>
+                <span class="truncate text-sm font-medium text-slate-800">{{ slice.label }}</span>
+              </div>
+              <div class="shrink-0 text-right text-sm">
+                <p class="font-semibold tabular-nums text-slate-900">{{ slice.pct | number: '1.0-1' : 'pt-PT' }}%</p>
+                <p class="text-xs text-slate-500">{{ slice.balance | currency: 'EUR':'symbol':'1.2-2':'pt-PT' }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-teal-50/40 px-6 py-5 sm:px-8">
+        <h2 class="text-lg font-semibold text-slate-900">Fluxo acumulado</h2>
+        <p class="mt-1 text-sm text-slate-600">
+          Linha dos montantes dos últimos movimentos somados ao longo do tempo (mais antigo à esquerda).
+        </p>
+      </div>
+      <div class="p-6 sm:p-8">
+        @if (cashflowChart().line) {
+          <svg
+            class="h-44 w-full max-w-full"
+            viewBox="0 0 100 44"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Gráfico de linha do fluxo acumulado dos movimentos recentes"
+          >
+            <defs>
+              <linearGradient id="clientDashArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.45" />
+                <stop offset="100%" stop-color="#14b8a6" stop-opacity="0.06" />
+              </linearGradient>
+            </defs>
+            <rect width="100" height="44" class="fill-slate-50/80" rx="0" />
+            <path [attr.d]="cashflowChart().area" fill="url(#clientDashArea)" />
+            <path
+              [attr.d]="cashflowChart().line"
+              fill="none"
+              stroke="#059669"
+              stroke-width="0.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
+          <p class="mt-3 text-center text-xs text-slate-500">
+            Eixo Y normalizado aos valores acumulados da amostra; reflete os mesmos movimentos da tabela abaixo.
+          </p>
+        } @else {
+          <p class="rounded-xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-8 text-center text-sm text-slate-600">
+            Ainda não há movimentos suficientes para desenhar o gráfico.
+          </p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+    <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-emerald-50/40 px-6 py-5 sm:px-8">
+      <h2 class="text-lg font-semibold text-slate-900">Operações</h2>
+      <p class="mt-1 text-sm text-slate-600">Transferência e depósito com atualização imediata do saldo.</p>
+    </div>
+    <div class="p-6 sm:p-8">
+    <div class="mt-1 inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+      <button
+        type="button"
+        class="rounded-lg px-4 py-2 text-sm font-medium transition"
+        [class.bg-white]="operationMode() === 'TRANSFER'"
+        [class.text-slate-900]="operationMode() === 'TRANSFER'"
+        [class.shadow-sm]="operationMode() === 'TRANSFER'"
+        [class.text-slate-600]="operationMode() !== 'TRANSFER'"
+        (click)="setMode('TRANSFER')"
+      >
+        Transferência
+      </button>
+      <button
+        type="button"
+        class="rounded-lg px-4 py-2 text-sm font-medium transition"
+        [class.bg-white]="operationMode() === 'DEPOSIT'"
+        [class.text-slate-900]="operationMode() === 'DEPOSIT'"
+        [class.shadow-sm]="operationMode() === 'DEPOSIT'"
+        [class.text-slate-600]="operationMode() !== 'DEPOSIT'"
+        (click)="setMode('DEPOSIT')"
+      >
+        Depósito
+      </button>
+    </div>
+
+    <form class="mt-5 grid gap-4 md:grid-cols-2" [formGroup]="operationForm" (ngSubmit)="submitOperation()">
+      <div class="space-y-2">
+        <label for="fromAccount" class="text-sm font-medium text-slate-700">Conta origem/destino</label>
+        <div
+          class="group relative"
+          (click)="$event.stopPropagation()"
+        >
+          <button
+            type="button"
+            id="fromAccount"
+            class="grid w-full grid-cols-1 rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/80 py-2.5 pl-9 pr-10 text-left text-sm font-medium text-slate-900 shadow-sm transition hover:-translate-y-px hover:border-slate-300 hover:shadow-md focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/14"
+            [attr.aria-expanded]="accountMenuOpen()"
+            aria-haspopup="listbox"
+            (click)="toggleAccountMenu()"
+          >
+            <span class="col-start-1 row-start-1 truncate pr-6">{{ selectedAccountLabel() }}</span>
+          </button>
+          <i
+            class="pi pi-wallet pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"
+            aria-hidden="true"
+          ></i>
+          <i
+            class="pi pi-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 transition"
+            [class.rotate-180]="accountMenuOpen()"
+            aria-hidden="true"
+          ></i>
+          @if (accountMenuOpen()) {
+            <div
+              role="listbox"
+              class="absolute z-30 mt-2 max-h-56 w-full overflow-auto rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-lg ring-1 ring-slate-900/5"
+            >
+              @for (opt of accountOptions(); track opt.id) {
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between px-3 py-2 text-left text-slate-700 transition hover:bg-emerald-50 hover:text-slate-900"
+                  [class.bg-emerald-50]="operationForm.controls.fromAccountId.value === opt.id"
+                  [class.font-semibold]="operationForm.controls.fromAccountId.value === opt.id"
+                  [attr.aria-selected]="operationForm.controls.fromAccountId.value === opt.id"
+                  (click)="selectAccount(opt.id)"
+                >
+                  <span class="truncate">{{ opt.label }}</span>
+                  @if (operationForm.controls.fromAccountId.value === opt.id) {
+                    <i class="pi pi-check text-xs text-emerald-600" aria-hidden="true"></i>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (operationMode() === 'TRANSFER') {
+        <div class="space-y-2">
+          <label for="toIban" class="text-sm font-medium text-slate-700">IBAN destino</label>
+          <div
+            class="group relative rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/80 shadow-sm transition hover:-translate-y-px hover:border-slate-300 hover:shadow-md focus-within:border-emerald-500 focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.14)]"
+          >
+            <i
+              class="pi pi-building-columns pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 transition group-focus-within:text-emerald-600"
+              aria-hidden="true"
+            ></i>
+            <input
+              id="toIban"
+              type="text"
+              formControlName="toIban"
+              placeholder="PT50 ..."
+              class="w-full rounded-xl bg-transparent py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+            />
+          </div>
+        </div>
+      }
+
+      <div class="space-y-2">
+        <label for="amount" class="text-sm font-medium text-slate-700">Montante</label>
+        <div
+          class="group relative rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/80 shadow-sm transition hover:-translate-y-px hover:border-slate-300 hover:shadow-md focus-within:border-emerald-500 focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.14)]"
+        >
+          <span
+            class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-emerald-700 transition group-focus-within:text-emerald-800"
+            >€</span
+          >
+          <input
+            id="amount"
+            type="number"
+            step="0.01"
+            min="0.01"
+            formControlName="amount"
+            placeholder="0,00"
+            class="w-full rounded-xl bg-transparent py-2.5 pl-8 pr-14 text-sm font-semibold text-slate-900 outline-none [appearance:textfield] placeholder:text-slate-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
+          <span
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700"
+            >EUR</span
+          >
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label for="note" class="text-sm font-medium text-slate-700">Descrição (opcional)</label>
+        <div
+          class="group relative rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/80 shadow-sm transition hover:-translate-y-px hover:border-slate-300 hover:shadow-md focus-within:border-emerald-500 focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.14)]"
+        >
+          <i
+            class="pi pi-pen-to-square pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 transition group-focus-within:text-emerald-600"
+            aria-hidden="true"
+          ></i>
+          <input
+            id="note"
+            type="text"
+            formControlName="note"
+            placeholder="Ex.: renda, poupança, despesas mensais..."
+            class="w-full rounded-xl bg-transparent py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+          />
+        </div>
+      </div>
+
+      <div class="md:col-span-2">
+        @if (operationError()) {
+          <p class="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {{ operationError() }}
+          </p>
+        }
+        @if (operationSuccess()) {
+          <p class="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+            {{ operationSuccess() }}
+          </p>
+        }
+
+        <button
+          type="submit"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(5,150,105,0.55)] transition duration-200 hover:-translate-y-0.5 hover:from-emerald-500 hover:to-teal-500 hover:shadow-[0_14px_28px_-10px_rgba(5,150,105,0.65)] active:translate-y-0 active:shadow-[0_8px_16px_-10px_rgba(5,150,105,0.6)] md:w-auto"
+        >
+          <i
+            class="text-xs"
+            [class.pi]="true"
+            [class.pi-send]="operationMode() === 'TRANSFER'"
+            [class.pi-wallet]="operationMode() === 'DEPOSIT'"
+            aria-hidden="true"
+          ></i>
+          {{ operationMode() === 'TRANSFER' ? 'Efetuar transferência' : 'Efetuar depósito' }}
+        </button>
+      </div>
+    </form>
+    </div>
+  </div>
+
+  <div class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]">
+    <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-teal-50/40 px-6 py-5 sm:px-8">
+      <h2 class="text-lg font-semibold text-slate-900">Últimos movimentos</h2>
+      <p class="mt-1 text-sm text-slate-600">Lista recente gerada pela demonstração do painel.</p>
+    </div>
+    <div class="overflow-x-auto px-2 pb-4 sm:px-4 sm:pb-6">
+      <table class="min-w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-5 py-3">Descrição</th>
+            <th class="px-5 py-3">Data</th>
+            <th class="px-5 py-3 text-right">Montante</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (tx of banking.recentTransactions(); track tx.id) {
+            <tr class="hover:bg-slate-50/80">
+              <td class="px-5 py-3 text-slate-700">{{ tx.description }}</td>
+              <td class="px-5 py-3 text-slate-500">{{ tx.bookedAt | date: 'short' }}</td>
+              <td
+                class="px-5 py-3 text-right font-medium"
+                [class.text-emerald-700]="tx.amount > 0"
+                [class.text-rose-700]="tx.amount < 0"
+              >
+                {{ tx.amount | currency: 'EUR':'symbol':'1.2-2':'pt-PT' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+      <p class="text-center text-xs text-slate-500">
+        Contas e cartões
+        <a routerLink="/client/accounts" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Ver contas</a>
+        · Perfil
+        <a routerLink="/client/profile" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Personalizar</a>
+        ·
+        <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Gestionar conta</a>
+        ·
+        <a routerLink="/client/settings" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Configurações</a>.
+      </p>
+    </div>
+  </div>
+</div>

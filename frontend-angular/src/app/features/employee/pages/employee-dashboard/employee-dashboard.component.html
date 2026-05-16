@@ -1,0 +1,128 @@
+﻿<h2 class="sr-only">Painel operacional do funcionário com métricas de turno e últimas operações</h2>
+
+<div class="mx-auto w-full max-w-[680px] space-y-4 pb-8">
+  <header>
+    <div class="mb-1 flex items-center justify-between gap-3">
+      <p class="text-xl font-medium text-slate-900">Painel operacional</p>
+      @if (auth.user(); as user) {
+        <div class="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          {{ user.email }}
+        </div>
+      }
+    </div>
+    <p class="text-sm text-slate-600">Resumo do atendimento de caixa e atalhos para operações diárias.</p>
+  </header>
+
+  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div class="grid gap-3 p-3 sm:grid-cols-3">
+      <article class="rounded-md bg-slate-100 px-4 py-3.5">
+        <p class="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">Operações hoje</p>
+        <p class="text-3xl font-medium leading-none text-slate-900">{{ ops.count() }}</p>
+        <span class="mt-2 inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+          <i class="pi pi-arrow-up text-[9px]" aria-hidden="true"></i>
+          Em atividade
+        </span>
+      </article>
+
+      <article class="rounded-md bg-slate-100 px-4 py-3.5">
+        <p class="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">Volume processado</p>
+        <p class="text-3xl font-medium leading-none text-slate-900">{{ ops.totalToday() | number: '1.0-0' }} €</p>
+        <span class="mt-2 inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+          <i class="pi pi-arrow-up text-[9px]" aria-hidden="true"></i>
+          Total do dia
+        </span>
+      </article>
+
+      <article class="rounded-md bg-slate-100 px-4 py-3.5">
+        <p class="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">Turno atual</p>
+        <p class="text-xl font-medium leading-none text-slate-900">{{ now | date: 'HH:mm' }}</p>
+        <p class="mt-1 text-xs text-slate-500">Atualizado na abertura do painel</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3.5">
+      <div class="flex items-center gap-2">
+        <p class="text-sm font-medium text-slate-900">Últimas operações</p>
+        <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+          {{ recentOps().length }} registos
+        </span>
+      </div>
+      <a routerLink="/employee/operations" class="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700">
+        Ver todas
+        <i class="pi pi-arrow-right text-[10px]" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-4 py-2.5 text-left">Cliente</th>
+            <th class="px-4 py-2.5 text-left">Tipo</th>
+            <th class="px-4 py-2.5 text-left">Hora</th>
+            <th class="px-4 py-2.5 text-right">Montante</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (op of recentOps(); track op.id) {
+            <tr class="border-t border-slate-200 hover:bg-slate-50/70">
+              <td class="px-4 py-2.5 font-medium text-slate-900">{{ op.customerName }}</td>
+              <td class="px-4 py-2.5">
+                <span class="inline-flex rounded-md px-2 py-0.5 text-[11px] font-medium" [class]="typePillClass(op.type)">
+                  {{ typeLabel(op.type) }}
+                </span>
+              </td>
+              <td class="px-4 py-2.5 text-slate-500">{{ op.createdAt | date: 'HH:mm' }}</td>
+              <td class="px-4 py-2.5 text-right font-medium text-slate-900">{{ op.amount | number: '1.0-0' }} €</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="px-4 py-6 text-center text-sm text-slate-500">Sem operações registadas no momento.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div class="grid gap-3 p-3 sm:grid-cols-3">
+      <a
+        routerLink="/employee/operations"
+        class="rounded-lg border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:bg-slate-50"
+      >
+        <div class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-md bg-slate-100">
+          <i class="pi pi-plus text-xs text-slate-700" aria-hidden="true"></i>
+        </div>
+        <p class="text-sm font-medium text-slate-900">Nova operação</p>
+        <p class="mt-1 text-xs text-slate-500">Registar atendimento</p>
+      </a>
+
+      <a
+        routerLink="/employee/operations"
+        class="rounded-lg border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:bg-slate-50"
+      >
+        <div class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-md bg-slate-100">
+          <i class="pi pi-history text-xs text-slate-700" aria-hidden="true"></i>
+        </div>
+        <p class="text-sm font-medium text-slate-900">Histórico</p>
+        <p class="mt-1 text-xs text-slate-500">Consultar operações</p>
+      </a>
+
+      <a
+        routerLink="/employee/settings"
+        class="rounded-lg border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:bg-slate-50"
+      >
+        <div class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-md bg-slate-100">
+          <i class="pi pi-file-export text-xs text-slate-700" aria-hidden="true"></i>
+        </div>
+        <p class="text-sm font-medium text-slate-900">Relatório</p>
+        <p class="mt-1 text-xs text-slate-500">Exportar turno</p>
+      </a>
+    </div>
+  </section>
+</div>
+  

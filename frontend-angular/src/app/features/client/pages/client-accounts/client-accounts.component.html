@@ -1,0 +1,216 @@
+﻿<div class="relative -mx-4 min-h-full pb-12 sm:-mx-6 lg:-mx-10">
+  <div
+    class="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-cyan-500/45 via-teal-400/35 to-emerald-400/15 blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute -left-16 top-28 h-72 w-72 rounded-full bg-gradient-to-tr from-teal-500/40 via-cyan-400/25 to-transparent blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute left-1/2 bottom-8 h-52 w-52 -translate-x-1/2 rounded-full bg-emerald-400/22 blur-3xl"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
+      <a routerLink="/client" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
+      <span aria-hidden="true">/</span>
+      <span
+        class="rounded-lg bg-cyan-50 px-2 py-1 font-medium text-cyan-900 ring-1 ring-cyan-200/90"
+        >Contas e cartões</span
+      >
+    </nav>
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Contas e cartões</h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+          Saldos, IBAN e registo de cartões — fundo em cyan, teal e esmeralda como identidade desta área, com o mesmo
+          layout de blobs das outras páginas.
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-4 shadow-sm backdrop-blur-sm ring-1 ring-cyan-500/10"
+      >
+        <div
+          class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-teal-600 text-white shadow-lg shadow-teal-900/25"
+          aria-hidden="true"
+        >
+          <i class="pi pi-wallet text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Área de contas</p>
+          <p class="text-sm font-semibold text-slate-900">Demonstração UI</p>
+          <p class="text-xs text-slate-500">Cartão e movimentos simulados nesta build.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 space-y-8">
+      <div class="grid gap-5 md:grid-cols-2">
+        @for (acc of banking.accounts(); track acc.id) {
+          <article
+            class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]"
+          >
+            <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 px-6 py-6 text-white">
+              <div class="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/15"></div>
+              <div class="absolute -bottom-10 -left-5 h-24 w-24 rounded-full bg-black/10"></div>
+              <p class="relative text-xs font-medium uppercase tracking-[0.24em] text-white/80">Bank Management</p>
+              <p class="relative mt-4 text-base font-semibold">{{ acc.label }}</p>
+              <p class="relative mt-4 font-mono text-lg tracking-[0.3em]">{{ maskedCardNumber(acc) }}</p>
+            </div>
+
+            <div class="space-y-3 p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-xs uppercase tracking-wide text-slate-500">Saldo disponível</p>
+                  <p class="text-3xl font-semibold text-slate-900">
+                    @if (isBalanceHidden(acc.id)) {
+                      {{ maskedAmount(acc) }}
+                    } @else {
+                      {{ acc.balance | currency: acc.currency:'symbol':'1.2-2':'pt-PT' }}
+                    }
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+                  (click)="toggleBalance(acc.id)"
+                >
+                  <i
+                    class="pi text-[11px]"
+                    [class.pi-eye]="isBalanceHidden(acc.id)"
+                    [class.pi-eye-slash]="!isBalanceHidden(acc.id)"
+                    aria-hidden="true"
+                  ></i>
+                  {{ isBalanceHidden(acc.id) ? 'Ver saldo' : 'Ocultar saldo' }}
+                </button>
+              </div>
+              <p class="text-xs text-slate-500">IBAN referência: {{ acc.iban }}</p>
+            </div>
+          </article>
+        }
+      </div>
+
+      <section class="grid gap-6 lg:grid-cols-3">
+        <div
+          class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03] lg:col-span-2"
+        >
+          <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-cyan-50/50 px-6 py-5 sm:px-8">
+            <h2 class="text-lg font-semibold text-slate-900">Registar cartão para pagamentos</h2>
+            <p class="mt-1 text-sm text-slate-600">Dados para demonstração na interface — sem processamento real.</p>
+          </div>
+          <div class="p-6 sm:p-8">
+          <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()">
+            <div class="sm:col-span-2">
+              <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cartão</label>
+              <input
+                id="holderName"
+                type="text"
+                formControlName="holderName"
+                placeholder="Ex.: ANA SILVA"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+              />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="cardNumber" class="mb-1.5 block text-sm font-medium text-slate-700">Número do cartão</label>
+              <input
+                id="cardNumber"
+                type="text"
+                formControlName="cardNumber"
+                inputmode="numeric"
+                maxlength="16"
+                placeholder="0000 0000 0000 0000"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm tracking-wider text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+              />
+            </div>
+
+            <div>
+              <label for="expiry" class="mb-1.5 block text-sm font-medium text-slate-700">Data de expiração</label>
+              <input
+                id="expiry"
+                type="text"
+                formControlName="expiry"
+                maxlength="5"
+                placeholder="MM/AA"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+              />
+            </div>
+
+            <div>
+              <app-password-reveal-field
+                variant="inline"
+                label="Código de segurança"
+                labelAria="código CVV"
+                inputId="cvc"
+                [control]="cardForm.controls.cvc"
+                autocomplete="cc-csc"
+                placeholder="CVV"
+                [maxLength]="4"
+                inputMode="numeric"
+              />
+              @if (cardForm.controls.cvc.touched && cardForm.controls.cvc.invalid) {
+                <p class="mt-1 text-xs text-rose-600">Indique 3 ou 4 dígitos.</p>
+              }
+            </div>
+
+            <div class="sm:col-span-2">
+              @if (cardSuccess()) {
+                <p class="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                  {{ cardSuccess() }}
+                </p>
+              }
+              <button
+                type="submit"
+                class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:from-emerald-500 hover:to-teal-500 sm:w-auto"
+              >
+                <i class="pi pi-credit-card text-xs" aria-hidden="true"></i>
+                Registar cartão
+              </button>
+            </div>
+          </form>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/[0.04]">
+            <h3 class="text-base font-semibold text-slate-900">Cartões registados</h3>
+            @if (savedCards().length === 0) {
+              <p class="mt-2 text-sm text-slate-600">Ainda não existem cartões registados.</p>
+            } @else {
+              <ul class="mt-3 space-y-3">
+                @for (card of savedCards(); track card.id) {
+                  <li class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                    <p class="text-sm font-semibold text-slate-900">{{ card.holderName }}</p>
+                    <p class="mt-1 font-mono text-sm text-slate-700">{{ card.cardNumberMasked }}</p>
+                    <p class="mt-1 text-xs text-slate-500">Validade: {{ card.expiry }}</p>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div class="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 via-white to-emerald-50/40 p-6">
+            <h3 class="text-base font-semibold text-slate-900">Próximas funcionalidades</h3>
+            <ul class="mt-3 list-inside list-disc space-y-1.5 text-sm text-slate-600">
+              <li>Transferências imediatas e agendadas</li>
+              <li>Gestão de cartões e limites</li>
+              <li>Download de extrato em PDF</li>
+              <li>Notificações em tempo real de movimentos</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <p class="text-center text-xs text-slate-500">
+        Para o seu nome e foto,
+        <a routerLink="/client/profile" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Personalizar perfil</a>
+        · Segurança da sessão,
+        <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Gestionar conta</a>
+        ·
+        <a routerLink="/client/settings" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Configurações</a>.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Backend (Maven / Spring)
+backend-java/**/target/
+backend-java/**/build/
+backend-java/**/.apt_generated
+backend-java/**/.classpath
+backend-java/**/.project
+backend-java/**/.settings/
+backend-java/**/.springBeans
+backend-java/**/.sts4-cache
+backend-java/**/HELP.md
+backend-java/**/.mvn/wrapper/maven-wrapper.jar
+
+# Segredos locais — usar application.properties.example
+backend-java/bank-api/src/main/resources/application.properties
+
+# Frontend (Node / Angular)
+frontend-angular/node_modules/
+frontend-angular/dist/
+frontend-angular/tmp/
+frontend-angular/out-tsc/
+frontend-angular/bazel-out/
+frontend-angular/.angular/cache
+frontend-angular/coverage/
+frontend-angular/npm-debug.log
+frontend-angular/yarn-error.log
+frontend-angular/__screenshots__/

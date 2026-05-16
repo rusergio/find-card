@@ -1,0 +1,227 @@
+<div class="relative -mx-4 min-h-full pb-12 sm:-mx-6 lg:-mx-10">
+  <div
+    class="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-violet-500/30 via-indigo-400/20 to-transparent blur-3xl"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="pointer-events-none absolute -left-16 top-32 h-72 w-72 rounded-full bg-gradient-to-tr from-fuchsia-400/25 via-violet-300/20 to-transparent blur-3xl"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+    <nav class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
+      <a routerLink="/admin" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
+      <span aria-hidden="true">/</span>
+      <span class="rounded-lg bg-violet-50 px-2 py-1 font-medium text-violet-800 ring-1 ring-violet-200/80">Empregados</span>
+    </nav>
+
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Empregados</h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+          Funcionários de caixa e balcão. Os dados são guardados no browser até integrar com o Spring Boot.
+        </p>
+      </div>
+      <div
+        class="inline-flex items-center gap-3 self-start rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-4 shadow-sm ring-1 ring-violet-500/10 backdrop-blur-sm sm:self-auto"
+      >
+        <span
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-900/20"
+          aria-hidden="true"
+        >
+          <i class="pi pi-users text-lg"></i>
+        </span>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total</p>
+          <p class="text-sm font-semibold tabular-nums text-slate-900">{{ store.count() }} registo(s)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-5">
+      <section
+        class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.04] lg:col-span-2"
+      >
+        <div class="border-b border-slate-100 bg-gradient-to-r from-violet-50/60 via-white to-indigo-50/40 px-6 py-5">
+          <h2 class="text-lg font-semibold text-slate-900">Registar empregado</h2>
+          <p class="mt-1 text-sm text-slate-600">Campos obrigatórios marcados implicitamente pelo formulário.</p>
+        </div>
+
+        <form class="space-y-5 px-6 py-7" (ngSubmit)="submit()" [formGroup]="form" novalidate>
+          <div class="space-y-1.5">
+            <label for="emp-fullName" class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nome completo</label>
+            <input
+              id="emp-fullName"
+              type="text"
+              formControlName="fullName"
+              autocomplete="name"
+              class="block w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/15"
+              placeholder="Ex.: Maria Silva"
+            />
+            @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+              <p class="text-xs text-rose-600">Indique pelo menos 3 caracteres.</p>
+            }
+          </div>
+          <div class="space-y-1.5">
+            <label for="emp-email" class="text-xs font-semibold uppercase tracking-wide text-slate-500">Email institucional</label>
+            <input
+              id="emp-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              class="block w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/15"
+              placeholder="nome@banco.pt"
+            />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+              <p class="text-xs text-rose-600">Email inválido.</p>
+            }
+          </div>
+          <div class="space-y-1.5">
+            <label for="emp-post" class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Posto de trabalho <span class="font-normal lowercase text-slate-400">(opcional)</span>
+            </label>
+            <input
+              id="emp-post"
+              type="text"
+              formControlName="workPost"
+              class="block w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/15"
+              placeholder="Ex.: Caixa 2 · Balcão principal"
+            />
+          </div>
+
+          @if (formError()) {
+            <p class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-800">{{ formError() }}</p>
+          }
+          @if (formMessage()) {
+            <p class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
+              {{ formMessage() }}
+            </p>
+          }
+
+          <button
+            type="submit"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:brightness-105"
+          >
+            <i class="pi pi-save text-xs" aria-hidden="true"></i>
+            Guardar registo
+          </button>
+        </form>
+      </section>
+
+      <section
+        class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.04] lg:col-span-3"
+      >
+        <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+          <div>
+            <h2 class="text-base font-semibold text-slate-900">Lista de empregados</h2>
+            <p class="mt-0.5 text-xs text-slate-500">{{ store.count() }} registo(s)</p>
+          </div>
+          <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-violet-700 ring-1 ring-violet-200/80">
+            Local
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          @if (store.employees().length === 0) {
+            <div class="px-5 py-16 text-center">
+              <div
+                class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 text-violet-600"
+                aria-hidden="true"
+              >
+                <i class="pi pi-user-plus text-xl"></i>
+              </div>
+              <p class="mt-4 text-sm font-medium text-slate-700">Ainda não há empregados</p>
+              <p class="mt-1 text-xs text-slate-500">Utilize o formulário ao lado para o primeiro registo.</p>
+            </div>
+          } @else {
+            <table class="min-w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Nome</th>
+                  <th class="px-5 py-3">Email</th>
+                  <th class="hidden px-5 py-3 sm:table-cell">Posto</th>
+                  <th class="hidden px-5 py-3 md:table-cell">Registado</th>
+                  <th class="px-5 py-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (emp of store.employees(); track emp.id) {
+                  <tr class="transition hover:bg-slate-50/80">
+                    <td class="px-5 py-3 font-medium text-slate-900">{{ emp.fullName }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ emp.email }}</td>
+                    <td class="hidden px-5 py-3 text-slate-600 sm:table-cell">
+                      {{ emp.workPost || '—' }}
+                    </td>
+                    <td class="hidden px-5 py-3 text-slate-500 md:table-cell">
+                      {{ emp.createdAt | date: 'short' }}
+                    </td>
+                    <td class="px-5 py-3 text-right">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-white px-2.5 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-50"
+                        (click)="confirmDelete(emp.id)"
+                      >
+                        <i class="pi pi-trash text-[10px]" aria-hidden="true"></i>
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+      </section>
+    </div>
+
+    <p class="text-center text-xs text-slate-500">
+      Para preferências da consola,
+      <a routerLink="/admin/settings" class="font-semibold text-violet-700 underline-offset-4 hover:underline">Configurações</a>
+      · Para credenciais,
+      <a routerLink="/admin/account-management" class="font-semibold text-violet-700 underline-offset-4 hover:underline">Gestionar conta</a>.
+    </p>
+  </div>
+</div>
+
+@if (deleteTargetId(); as delId) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="del-title"
+    (click)="cancelDelete()"
+  >
+    <div
+      class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start gap-3">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+          <i class="pi pi-exclamation-triangle text-lg" aria-hidden="true"></i>
+        </span>
+        <div>
+          <h2 id="del-title" class="text-lg font-semibold text-slate-900">Eliminar empregado?</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Esta ação remove o registo localmente. Quando existir API, deverá sincronizar com o backend.
+          </p>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          (click)="cancelDelete()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-500"
+          (click)="executeDelete()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

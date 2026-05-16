@@ -1,0 +1,180 @@
+﻿<div class="relative -mx-4 min-h-full pb-12 sm:-mx-6 lg:-mx-10">
+  <div class="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-emerald-400/30 via-teal-300/20 to-transparent blur-3xl" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -left-20 top-40 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
+      <a routerLink="/client" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
+      <span aria-hidden="true">/</span>
+      <span class="rounded-lg bg-slate-200/60 px-2 py-1 text-slate-800">Configurações</span>
+    </nav>
+
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Configurações da aplicação</h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+          Idioma da interface — preferência local deste dispositivo.
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white/80 px-5 py-4 shadow-sm backdrop-blur-sm ring-1 ring-slate-900/[0.04]"
+      >
+        <div
+          class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-900/20"
+          aria-hidden="true"
+        >
+          <i class="pi pi-palette text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Experiência</p>
+          <p class="text-sm font-semibold text-slate-900">Preferências locais</p>
+          <p class="text-xs text-slate-500">As escolhas ficam neste browser até existir API.</p>
+        </div>
+      </div>
+    </div>
+
+    @if (savedMessage()) {
+      <div
+        class="mt-8 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm"
+        role="status"
+      >
+        <i class="pi pi-check-circle mt-0.5" aria-hidden="true"></i>
+        <span>{{ savedMessage() }}</span>
+      </div>
+    }
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <section
+        class="lg:col-span-2 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/[0.05]"
+      >
+        <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-emerald-50/40 px-6 py-5 sm:px-8">
+          <h2 class="text-lg font-semibold text-slate-900">Aplicação</h2>
+          <p class="mt-1 text-sm text-slate-600">Idioma da interface.</p>
+        </div>
+        <div class="space-y-6 px-6 py-7 sm:px-8">
+          <form [formGroup]="appForm" class="space-y-5">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700">Idioma</label>
+              <div class="relative" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm text-slate-900 transition hover:border-slate-300"
+                  [class.border-emerald-500]="languageMenuOpen()"
+                  [class.ring-4]="languageMenuOpen()"
+                  [class.ring-emerald-500/15]="languageMenuOpen()"
+                  (click)="toggleLanguageMenu()"
+                >
+                  <span class="flex items-center gap-2">
+                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs">{{
+                      selectedLanguage().flag
+                    }}</span>
+                    {{ selectedLanguage().label }}
+                  </span>
+                  <i
+                    class="pi pi-chevron-down text-xs text-slate-400 transition"
+                    [class.rotate-180]="languageMenuOpen()"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+
+                @if (languageMenuOpen()) {
+                  <div class="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-slate-900/5">
+                    @for (opt of languageOptions; track opt.value) {
+                      <button
+                        type="button"
+                        class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-800 transition hover:bg-slate-50"
+                        [class.bg-emerald-50]="appForm.controls.language.value === opt.value"
+                        [class.text-emerald-700]="appForm.controls.language.value === opt.value"
+                        (click)="pickLanguage(opt.value)"
+                      >
+                        <span class="flex items-center gap-2">
+                          <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs">{{
+                            opt.flag
+                          }}</span>
+                          {{ opt.label }}
+                        </span>
+                        @if (appForm.controls.language.value === opt.value) {
+                          <i class="pi pi-check text-xs text-emerald-600" aria-hidden="true"></i>
+                        }
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-500"
+              (click)="saveSection('Aplicação')"
+            >
+              <i class="pi pi-save text-xs" aria-hidden="true"></i>
+              Guardar aplicação
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <aside class="flex flex-col gap-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/[0.04]">
+          <h2 class="text-base font-semibold text-slate-900">Dicas rápidas</h2>
+          <ul class="mt-4 space-y-3 text-sm text-slate-600">
+            <li class="flex gap-2">
+              <span class="font-semibold text-emerald-700">·</span>
+              O idioma escolhido pode ser alinhado com traduções da API quando existirem ficheiros i18n.
+            </li>
+            <li class="flex gap-2">
+              <span class="font-semibold text-emerald-700">·</span>
+              PIN de recuperação e palavra-passe: em
+              <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
+                >Gestionar conta</a
+              >.
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 via-white to-emerald-50/40 p-6">
+          <h2 class="text-base font-semibold text-slate-900">Outras áreas</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Perfil e segurança da conta têm páginas dedicadas com o mesmo tipo de layout.
+          </p>
+          <div class="mt-4 flex flex-col gap-2">
+            <a
+              routerLink="/client/profile"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              Personalizar perfil
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+            <a
+              routerLink="/client/account-management"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              Gestionar conta
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section
+      class="mt-6 overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 p-6 sm:p-8"
+    >
+      <h2 class="text-lg font-semibold text-slate-900">Sugestões para o futuro</h2>
+      <p class="mt-1 text-sm text-slate-600">Ideias alinhadas às mesmas áreas que em Gestionar conta (sessões, notificações).</p>
+      <ul class="mt-4 space-y-2 text-sm text-slate-600">
+        <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"></span>Gestão de sessões activas por dispositivo</li>
+        <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"></span>Confirmação biométrica para operações sensíveis</li>
+        <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"></span>Canal de notificações preferido (email / SMS / app)</li>
+      </ul>
+    </section>
+
+    <p class="mt-8 text-center text-xs text-slate-500">
+      Para credenciais e dispositivos,
+      <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Gestionar conta</a>
+      · Para contas bancárias,
+      <a routerLink="/client/accounts" class="font-semibold text-emerald-700 underline-offset-4 hover:underline">Contas e cartões</a>.
+    </p>
+  </div>
+</div>
