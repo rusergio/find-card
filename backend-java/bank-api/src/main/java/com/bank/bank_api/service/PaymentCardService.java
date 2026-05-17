@@ -7,6 +7,7 @@ import com.bank.bank_api.entity.User;
 import com.bank.bank_api.exception.ResourceNotFoundException;
 import com.bank.bank_api.repository.PaymentCardRepository;
 import com.bank.bank_api.repository.UserRepository;
+import com.bank.bank_api.util.CardValidationUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,11 @@ public class PaymentCardService {
         String email = requireEmail(authentication);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        CardValidationUtil.validateHolderName(request.getHolderName());
+        CardValidationUtil.validateCardNumber(request.getCardNumber());
+        CardValidationUtil.validateExpiry(request.getExpiry());
+        CardValidationUtil.validateCvc(request.getCvc());
 
         String digits = request.getCardNumber().trim();
         String[] expiryParts = request.getExpiry().trim().split("/");

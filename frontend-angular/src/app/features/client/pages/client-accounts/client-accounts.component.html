@@ -156,60 +156,66 @@
             </p>
           </div>
           <div class="p-6 sm:p-8">
-            <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()">
+            <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()" novalidate>
               <div class="sm:col-span-2">
-                <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cart?o</label>
+                <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cartão</label>
                 <input
                   id="holderName"
                   type="text"
                   formControlName="holderName"
-                  placeholder="Ex.: ANA SILVA"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  autocomplete="cc-name"
+                  placeholder="Ex.: Ana Silva"
+                  maxlength="120"
+                  (input)="onHolderNameInput($event)"
+                  (blur)="onHolderNameBlur()"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm uppercase text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  [class.border-rose-400]="cardForm.controls.holderName.touched && cardForm.controls.holderName.invalid"
                 />
-              </div>
-
-              <div class="sm:col-span-2">
-                <label for="cardNumber" class="mb-1.5 block text-sm font-medium text-slate-700">N?mero do cart?o</label>
-                <input
-                  id="cardNumber"
-                  type="text"
-                  formControlName="cardNumber"
-                  inputmode="numeric"
-                  maxlength="16"
-                  placeholder="0000 0000 0000 0000"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm tracking-wider text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-                />
-              </div>
-
-              <div>
-                <label for="expiry" class="mb-1.5 block text-sm font-medium text-slate-700">Data de expira??o</label>
-                <input
-                  id="expiry"
-                  type="text"
-                  formControlName="expiry"
-                  maxlength="5"
-                  placeholder="MM/AA"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-                />
-              </div>
-
-              <div>
-                <app-password-reveal-field
-                  variant="inline"
-                  label="C?digo de seguran?a"
-                  labelAria="c?digo CVV"
-                  inputId="cvc"
-                  [control]="cardForm.controls.cvc"
-                  autocomplete="cc-csc"
-                  placeholder="CVV"
-                  [maxLength]="4"
-                  inputMode="numeric"
-                />
-                @if (cardForm.controls.cvc.touched && cardForm.controls.cvc.invalid) {
-                  <p class="mt-1 text-xs text-rose-600">Indique 3 ou 4 d?gitos.</p>
+                @if (fieldError('holderName'); as msg) {
+                  <p class="mt-1 text-xs text-rose-600">{{ msg }}</p>
                 }
               </div>
 
+              <div class="sm:col-span-2">
+                <label for="cardNumber" class="mb-1.5 block text-sm font-medium text-slate-700">Número do cartão</label>
+                <input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19"
+                  placeholder="0000 0000 0000 0000" [value]="cardNumberDisplay()" (input)="onCardNumberInput($event)"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm tracking-wider text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  [class.border-rose-400]="cardForm.controls.cardNumber.touched && cardForm.controls.cardNumber.invalid" />
+                @if (fieldError('cardNumber'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
+              </div>
+
+              <div>
+                <label for="expiryMonth" class="mb-1.5 block text-sm font-medium text-slate-700">MÃªs</label>
+                <select id="expiryMonth" formControlName="expiryMonth"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  [class.border-rose-400]="cardForm.controls.expiryMonth.touched && cardForm.controls.expiryMonth.invalid">
+                  <option value="" disabled>MM</option>
+                  @for (m of expiryMonths; track m) { <option [value]="m">{{ m }}</option> }
+                </select>
+                @if (fieldError('expiryMonth'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
+              </div>
+
+              <div>
+                <label for="expiryYear" class="mb-1.5 block text-sm font-medium text-slate-700">Ano</label>
+                <select id="expiryYear" formControlName="expiryYear"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  [class.border-rose-400]="cardForm.controls.expiryYear.touched && cardForm.controls.expiryYear.invalid">
+                  <option value="" disabled>AAAA</option>
+                  @for (y of expiryYears; track y) { <option [value]="y">{{ y }}</option> }
+                </select>
+                @if (fieldError('expiryYear'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
+                @if (expiryPastError(); as pastMsg) { <p class="mt-1 text-xs text-rose-600">{{ pastMsg }}</p> }
+              </div>
+
+              <div>
+                <label for="cvc" class="mb-1.5 block text-sm font-medium text-slate-700">CÃ³digo de seguranÃ§a (CVV)</label>
+                <input id="cvc" type="password" formControlName="cvc" inputmode="numeric" autocomplete="cc-csc" maxlength="3"
+                  placeholder="â¢â¢â¢" (input)="onCvcInput($event)"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm tracking-[0.35em] text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  [class.border-rose-400]="cardForm.controls.cvc.touched && cardForm.controls.cvc.invalid" />
+                @if (fieldError('cvc'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
+              </div>
               <div class="sm:col-span-2">
                 @if (cardError()) {
                   <p class="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">

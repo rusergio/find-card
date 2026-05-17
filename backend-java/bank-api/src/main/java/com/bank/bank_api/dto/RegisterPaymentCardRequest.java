@@ -14,6 +14,7 @@ public class RegisterPaymentCardRequest {
 
     @NotBlank
     @Size(min = 3, max = 120)
+    @Pattern(regexp = "^[\\p{L}][\\p{L} .'-]{2,119}$", message = "invalid holder name")
     private String holderName;
 
     @NotBlank
@@ -26,6 +27,6 @@ public class RegisterPaymentCardRequest {
 
     /** Validado no pedido; nunca é guardado na base de dados. */
     @NotBlank
-    @Pattern(regexp = "^\\d{3,4}$", message = "must be 3 or 4 digits")
+    @Pattern(regexp = "^\\d{3}$", message = "must be 3 digits")
     private String cvc;
 }

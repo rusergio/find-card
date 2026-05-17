@@ -29,7 +29,7 @@ const MOCK_TX: ClientTransaction[] = [
   {
     id: 'tx-2',
     accountId: 'acc-main',
-    description: 'Pagamento cartão',
+    description: 'Compra online',
     amount: -84.99,
     kind: 'debit',
     bookedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
