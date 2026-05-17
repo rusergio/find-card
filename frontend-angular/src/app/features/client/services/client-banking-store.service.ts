@@ -1,5 +1,10 @@
-﻿import { computed, Injectable, signal } from '@angular/core';
+﻿import { isPlatformBrowser } from '@angular/common';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
 import type { ClientAccount, ClientTransaction } from '../models/client-account.model';
+import type { ClientPaymentCard } from '../models/client-payment-card.model';
+
+const PAYMENT_CARDS_STORAGE_PREFIX = 'fc_payment_cards:';
 
 function newId(prefix: string): string {
   const c = globalThis.crypto;
@@ -63,11 +68,18 @@ const MOCK_TX: ClientTransaction[] = [
 
 @Injectable({ providedIn: 'root' })
 export class ClientBankingStoreService {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly auth = inject(AuthService);
+
   private readonly _accounts = signal<ClientAccount[]>(MOCK_ACCOUNTS);
   private readonly _transactions = signal<ClientTransaction[]>(MOCK_TX);
+  private readonly _paymentCards = signal<ClientPaymentCard[]>(this.loadPaymentCards());
 
   readonly accounts = this._accounts.asReadonly();
   readonly transactions = this._transactions.asReadonly();
+  readonly paymentCards = this._paymentCards.asReadonly();
+
+  readonly hasRegisteredCard = computed(() => this._paymentCards().length > 0);
 
   readonly totalBalance = computed(() =>
     this._accounts().reduce((sum, acc) => sum + acc.balance, 0),
@@ -78,6 +90,27 @@ export class ClientBankingStoreService {
       .sort((a, b) => b.bookedAt.localeCompare(a.bookedAt))
       .slice(0, 8),
   );
+
+  /** Recarrega cartões do `localStorage` (útil após login na mesma sessão). */
+  reloadPaymentCardsFromStorage(): void {
+    this._paymentCards.set(this.loadPaymentCards());
+  }
+
+  registerPaymentCard(input: {
+    holderName: string;
+    cardNumber: string;
+    expiry: string;
+  }): ClientPaymentCard {
+    const card: ClientPaymentCard = {
+      id: newId('card'),
+      holderName: input.holderName.trim(),
+      cardNumberMasked: `**** **** **** ${input.cardNumber.slice(-4)}`,
+      expiry: input.expiry,
+    };
+    this._paymentCards.update((rows) => [card, ...rows]);
+    this.persistPaymentCards();
+    return card;
+  }
 
   deposit(accountId: string, amount: number, note?: string): { ok: true } | { ok: false; error: string } {
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -170,6 +203,58 @@ export class ClientBankingStoreService {
   private prependTransaction(tx: ClientTransaction): void {
     this._transactions.update((rows) => [tx, ...rows]);
   }
+
+  private storageKey(): string | null {
+    const email = this.auth.user()?.email?.trim().toLowerCase();
+    return email ? `${PAYMENT_CARDS_STORAGE_PREFIX}${email}` : null;
+  }
+
+  private loadPaymentCards(): ClientPaymentCard[] {
+    if (!isPlatformBrowser(this.platformId)) {
+      return [];
+    }
+    const key = this.storageKey();
+    if (!key) {
+      return [];
+    }
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) {
+        return [];
+      }
+      const parsed = JSON.parse(raw) as unknown;
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
+      return parsed.filter(isPaymentCard);
+    } catch {
+      return [];
+    }
+  }
+
+  private persistPaymentCards(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const key = this.storageKey();
+    if (!key) {
+      return;
+    }
+    localStorage.setItem(key, JSON.stringify(this._paymentCards()));
+  }
+}
+
+function isPaymentCard(value: unknown): value is ClientPaymentCard {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  const row = value as Record<string, unknown>;
+  return (
+    typeof row['id'] === 'string' &&
+    typeof row['holderName'] === 'string' &&
+    typeof row['cardNumberMasked'] === 'string' &&
+    typeof row['expiry'] === 'string'
+  );
 }
 
 function round2(value: number): number {
