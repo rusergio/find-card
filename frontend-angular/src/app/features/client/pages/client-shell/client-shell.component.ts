@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import type { SessionUser } from '../../../../core/models/session-user';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ClientBankingStoreService } from '../../services/client-banking-store.service';
 
 const SIDEBAR_COLLAPSED_KEY = 'bm-client-sidebar-collapsed';
 
@@ -15,6 +16,7 @@ const SIDEBAR_COLLAPSED_KEY = 'bm-client-sidebar-collapsed';
 })
 export class ClientShellComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
+  private readonly banking = inject(ClientBankingStoreService);
   private readonly router = inject(Router);
   private readonly title = inject(Title);
   private readonly platformId = inject(PLATFORM_ID);
@@ -26,6 +28,7 @@ export class ClientShellComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.title.setTitle('Cliente · Bank Management');
     if (isPlatformBrowser(this.platformId)) {
+      this.banking.loadFromApi();
       this.sidebarCollapsed.set(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
     }
   }

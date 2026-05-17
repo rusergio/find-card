@@ -123,6 +123,15 @@ Base URL em desenvolvimento (via proxy): `http://localhost:4200/api` → `http:/
 | `POST` | `/accounts/withdraw` | Levantamento |
 | `POST` | `/accounts/transfer` | Transferência entre contas |
 
+### Cartões de pagamento (autenticado)
+
+Tabela PostgreSQL: `payment_cards` (ligada a `users`). Guarda apenas **últimos 4 dígitos** e validade — nunca o número completo nem o CVV.
+
+| Método | Endpoint | Descrição |
+| ------ | -------- | --------- |
+| `GET`  | `/payment-cards` | Listar cartões do utilizador |
+| `POST` | `/payment-cards` | Registar cartão (`holderName`, `cardNumber`, `expiry`, `cvc`) |
+
 ### Utilizadores e transações
 
 | Método | Endpoint | Descrição |
