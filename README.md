@@ -53,6 +53,8 @@ Em desenvolvimento, o Angular (`ng serve`) expõe a app em `http://localhost:420
 
 ```
 find-card/
+├── docker-compose.yml    # Orquestração (PostgreSQL + API + frontend)
+├── .env.example          # Variáveis Docker (copiar para .env)
 ├── frontend-angular/     # SPA Angular (bank-management)
 │   ├── src/app/
 │   │   ├── core/         # Auth, guards, serviços API
@@ -140,6 +142,12 @@ Documentação interativa (com o backend a correr): [http://localhost:8080/swagg
 
 ## Pré-requisitos
 
+**Com Docker (recomendado)**
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ou Docker Engine + Compose v2)
+
+**Desenvolvimento local (sem Docker)**
+
 - **Node.js** 20+ e **npm** 10+
 - **Java** 17+
 - **Maven** 3.9+ (ou usar o wrapper se existir no projeto)
@@ -147,7 +155,53 @@ Documentação interativa (com o backend a correr): [http://localhost:8080/swagg
 
 ---
 
-## Configuração e execução
+## Docker (tudo num comando)
+
+Na raiz do projeto:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+| Serviço    | URL no browser                          |
+| ---------- | --------------------------------------- |
+| Aplicação  | http://localhost (porta `FRONTEND_PORT`, default **80**) |
+| API        | http://localhost:8080                   |
+| Swagger    | http://localhost:8080/swagger-ui.html |
+| PostgreSQL | `localhost:5432` (user/password no `.env`) |
+
+O Nginx no contentor `frontend` serve o Angular e reencaminha `/api/*` para o Spring Boot — o browser só fala com uma origem, sem problemas de CORS.
+
+### Comandos úteis
+
+```bash
+# Em segundo plano
+docker compose up -d --build
+
+# Parar e remover contentores
+docker compose down
+
+# Parar e apagar volume da BD (reset total)
+docker compose down -v
+
+# Ver logs
+docker compose logs -f api
+```
+
+### Contentores
+
+| Contentor            | Imagem / build      | Função              |
+| -------------------- | ------------------- | ------------------- |
+| `find-card-db`       | `postgres:16-alpine`| Base de dados       |
+| `find-card-api`      | `backend-java/bank-api/Dockerfile` | API Spring Boot |
+| `find-card-frontend` | `frontend-angular/Dockerfile`    | Nginx + SPA     |
+
+Credenciais de demo (seed): `admin@bank.com` / `admin123` — criadas automaticamente ao arrancar a API.
+
+---
+
+## Configuração e execução (local, sem Docker)
 
 ### 1. Base de dados PostgreSQL
 
@@ -236,7 +290,6 @@ O segredo JWT está atualmente definido no código (`JwtService`); para produç�
 
 ## Roadmap (próximas iterações)
 
-- Commits incrementais por funcionalidade
 - Reforço do perfil `EMPLOYEE` no backend
 - Recuperação de password (`/auth/forgot-password` no frontend)
 - Configuração JWT e BD via variáveis de ambiente
