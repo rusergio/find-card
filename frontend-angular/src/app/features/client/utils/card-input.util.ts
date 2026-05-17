@@ -36,6 +36,15 @@ export function passesLuhnCheck(cardNumber: string): boolean {
   return sum % 10 === 0;
 }
 
+/** Máscara de entrada MM/AA (máx. 5 caracteres). */
+export function formatExpiryMmAaInput(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) {
+    return digits;
+  }
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+}
+
 export function buildExpiryMmYy(month: string, year: string): string {
   const mm = month.padStart(2, '0');
   const yy = year.length === 4 ? year.slice(-2) : year.padStart(2, '0');

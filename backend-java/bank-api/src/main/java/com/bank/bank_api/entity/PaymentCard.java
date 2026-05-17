@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -44,6 +45,14 @@ public class PaymentCard {
     @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
+
+    @Builder.Default
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal balance = BigDecimal.ZERO;
+
+    @Builder.Default
+    @Column(nullable = false, length = 3)
+    private String currency = "EUR";
 
     private LocalDateTime createdAt;
 }

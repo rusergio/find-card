@@ -13,20 +13,20 @@
   ></div>
 
   <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navega??o secund?ria">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
       <a routerLink="/client" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
       <span aria-hidden="true">/</span>
-      <span class="rounded-lg bg-cyan-50 px-2 py-1 font-medium text-cyan-900 ring-1 ring-cyan-200/90">Contas e cart?es</span>
+      <span class="rounded-lg bg-cyan-50 px-2 py-1 font-medium text-cyan-900 ring-1 ring-cyan-200/90">O meu cartão</span>
     </nav>
 
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Contas e cart?es</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">O meu cartão</h1>
         <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
           @if (banking.hasRegisteredCard()) {
-            Consulte saldos, IBAN e os seus cart?es registados.
+            Veja o saldo e os dados do cartão que registou. Pode associar cartões adicionais quando precisar.
           } @else {
-            Registe o seu cart?o para ativar a visualiza??o em cart?o f?sico. At? l?, v? apenas os saldos das contas.
+            Registe o seu cartão de pagamento. Depois do registo, o saldo inicial é 0,00 € e todos os dados aparecem aqui.
           }
         </p>
       </div>
@@ -40,19 +40,19 @@
           <i class="pi pi-wallet text-2xl"></i>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">?rea de contas</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Área de contas</p>
           <p class="text-sm font-semibold text-slate-900">
             @if (banking.hasRegisteredCard()) {
-              Cart?o ativo
+              Cartão ativo
             } @else {
-              Cart?o pendente
+              Cartão pendente
             }
           </p>
           <p class="text-xs text-slate-500">
             @if (banking.hasRegisteredCard()) {
-              {{ banking.paymentCards().length }} cart?o(?es) registado(s).
+              {{ banking.paymentCards().length }} cartão(?es) registado(s).
             } @else {
-              Registe um cart?o para ver o design em cart?o banc?rio.
+              Registe um cartão para ver o design em cartão bancário.
             }
           </p>
         </div>
@@ -62,7 +62,7 @@
     <div class="mt-10 space-y-8">
       @if (banking.loading()) {
         <p class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-          A carregar contas e cartoes?
+          A carregar o seu cartão…
         </p>
       }
       @if (banking.error(); as err) {
@@ -88,53 +88,6 @@
         </div>
       }
 
-      <div class="grid gap-5 md:grid-cols-2">
-        @for (acc of banking.accounts(); track acc.id) {
-          <article
-            class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03]"
-          >
-            @if (!banking.hasRegisteredCard()) {
-              <div class="border-b border-slate-100 bg-slate-50 px-6 py-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Conta banc?ria</p>
-                <p class="mt-1 text-base font-semibold text-slate-900">{{ acc.label }}</p>
-              </div>
-            }
-
-            <div class="space-y-3 p-5">
-              @if (banking.hasRegisteredCard()) {
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ acc.label }}</p>
-              }
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <p class="text-xs uppercase tracking-wide text-slate-500">Saldo dispon?vel</p>
-                  <p class="text-3xl font-semibold text-slate-900">
-                    @if (isBalanceHidden(acc.id)) {
-                      {{ maskedAmount(acc) }}
-                    } @else {
-                      {{ acc.balance | currency: acc.currency:'symbol':'1.2-2':'pt-PT' }}
-                    }
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-                  (click)="toggleBalance(acc.id)"
-                >
-                  <i
-                    class="pi text-[11px]"
-                    [class.pi-eye]="isBalanceHidden(acc.id)"
-                    [class.pi-eye-slash]="!isBalanceHidden(acc.id)"
-                    aria-hidden="true"
-                  ></i>
-                  {{ isBalanceHidden(acc.id) ? 'Ver saldo' : 'Ocultar saldo' }}
-                </button>
-              </div>
-              <p class="text-xs text-slate-500">IBAN: {{ acc.iban }}</p>
-            </div>
-          </article>
-        }
-      </div>
-
       <section class="grid gap-6 lg:grid-cols-3">
         <div
           class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/[0.05] ring-1 ring-slate-900/[0.03] lg:col-span-2"
@@ -142,21 +95,21 @@
           <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-cyan-50/50 px-6 py-5 sm:px-8">
             <h2 class="text-lg font-semibold text-slate-900">
               @if (banking.hasRegisteredCard()) {
-                Registar outro cart?o
+                Registar outro cartão
               } @else {
-                Registar cart?o para pagamentos
+                Registar cartão para pagamentos
               }
             </h2>
             <p class="mt-1 text-sm text-slate-600">
               @if (banking.hasRegisteredCard()) {
-                Pode associar cart?es adicionais ? sua conta.
+                Pode associar cartões adicionais à sua conta.
               } @else {
-                Obrigat?rio na primeira utiliza??o ??? s? depois o cart?o aparece na ?rea de Contas.
+                Obrigatório na primeira utilização — só depois o cartão aparece nesta área.
               }
             </p>
           </div>
           <div class="p-6 sm:p-8">
-            <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()" novalidate>
+            <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()">
               <div class="sm:col-span-2">
                 <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cartão</label>
                 <input
@@ -164,11 +117,11 @@
                   type="text"
                   formControlName="holderName"
                   autocomplete="cc-name"
-                  placeholder="Ex.: Ana Silva"
+                  placeholder="Ex.: ANA SILVA"
                   maxlength="120"
                   (input)="onHolderNameInput($event)"
                   (blur)="onHolderNameBlur()"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm uppercase text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
                   [class.border-rose-400]="cardForm.controls.holderName.touched && cardForm.controls.holderName.invalid"
                 />
                 @if (fieldError('holderName'); as msg) {
@@ -186,36 +139,41 @@
               </div>
 
               <div>
-                <label for="expiryMonth" class="mb-1.5 block text-sm font-medium text-slate-700">MÃªs</label>
-                <select id="expiryMonth" formControlName="expiryMonth"
+                <label for="expiry" class="mb-1.5 block text-sm font-medium text-slate-700">Data de expiração</label>
+                <input
+                  id="expiry"
+                  type="text"
+                  formControlName="expiry"
+                  inputmode="numeric"
+                  autocomplete="cc-exp"
+                  maxlength="5"
+                  placeholder="MM/AA"
+                  (input)="onExpiryInput($event)"
                   class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-                  [class.border-rose-400]="cardForm.controls.expiryMonth.touched && cardForm.controls.expiryMonth.invalid">
-                  <option value="" disabled>MM</option>
-                  @for (m of expiryMonths; track m) { <option [value]="m">{{ m }}</option> }
-                </select>
-                @if (fieldError('expiryMonth'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
+                  [class.border-rose-400]="cardForm.controls.expiry.touched && cardForm.controls.expiry.invalid"
+                />
+                @if (fieldError('expiry'); as msg) {
+                  <p class="mt-1 text-xs text-rose-600">{{ msg }}</p>
+                }
               </div>
 
               <div>
-                <label for="expiryYear" class="mb-1.5 block text-sm font-medium text-slate-700">Ano</label>
-                <select id="expiryYear" formControlName="expiryYear"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-                  [class.border-rose-400]="cardForm.controls.expiryYear.touched && cardForm.controls.expiryYear.invalid">
-                  <option value="" disabled>AAAA</option>
-                  @for (y of expiryYears; track y) { <option [value]="y">{{ y }}</option> }
-                </select>
-                @if (fieldError('expiryYear'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
-                @if (expiryPastError(); as pastMsg) { <p class="mt-1 text-xs text-rose-600">{{ pastMsg }}</p> }
+                <app-password-reveal-field
+                  variant="inline"
+                  label="Código de segurança"
+                  labelAria="código CVV"
+                  inputId="cvc"
+                  [control]="cardForm.controls.cvc"
+                  autocomplete="cc-csc"
+                  placeholder="CVV"
+                  [maxLength]="3"
+                  inputMode="numeric"
+                />
+                @if (fieldError('cvc'); as msg) {
+                  <p class="mt-1 text-xs text-rose-600">{{ msg }}</p>
+                }
               </div>
 
-              <div>
-                <label for="cvc" class="mb-1.5 block text-sm font-medium text-slate-700">CÃ³digo de seguranÃ§a (CVV)</label>
-                <input id="cvc" type="password" formControlName="cvc" inputmode="numeric" autocomplete="cc-csc" maxlength="3"
-                  placeholder="â¢â¢â¢" (input)="onCvcInput($event)"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm tracking-[0.35em] text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-                  [class.border-rose-400]="cardForm.controls.cvc.touched && cardForm.controls.cvc.invalid" />
-                @if (fieldError('cvc'); as msg) { <p class="mt-1 text-xs text-rose-600">{{ msg }}</p> }
-              </div>
               <div class="sm:col-span-2">
                 @if (cardError()) {
                   <p class="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
@@ -233,7 +191,7 @@
                   class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:from-emerald-500 hover:to-teal-500 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   <i class="pi pi-credit-card text-xs" aria-hidden="true"></i>
-                  Registar cart?o
+                  Registar cartão
                 </button>
               </div>
             </form>
@@ -242,10 +200,10 @@
 
         <div class="flex flex-col gap-6">
           <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/[0.04]">
-            <h3 class="text-base font-semibold text-slate-900">Cart§es registados</h3>
+            <h3 class="text-base font-semibold text-slate-900">Cartões registados</h3>
             @if (!banking.hasRegisteredCard()) {
               <p class="mt-2 text-sm text-slate-600">
-                Ainda n?o registou nenhum cart?o. Preencha o formul?rio para desbloquear a visualiza??o em cart?o.
+                Ainda não registou nenhum cartão. Preencha o formulário para desbloquear a visualização em cartão.
               </p>
             } @else {
               <ul class="mt-3 space-y-3">
@@ -254,6 +212,7 @@
                     <p class="text-sm font-semibold text-slate-900">{{ card.holderName }}</p>
                     <p class="mt-1 font-mono text-sm text-slate-700">{{ card.cardNumberMasked }}</p>
                     <p class="mt-1 text-xs text-slate-500">Validade: {{ card.expiry }}</p>
+                    <p class="mt-1 text-sm font-semibold text-emerald-700">{{ card.balance | currency: card.currency:'symbol':'1.2-2':'pt-PT' }}</p>
                   </li>
                 }
               </ul>
@@ -262,20 +221,19 @@
 
           @if (!banking.hasRegisteredCard()) {
             <div class="rounded-3xl border border-amber-200/90 bg-gradient-to-br from-amber-50 via-white to-orange-50/40 p-6">
-              <h3 class="text-base font-semibold text-slate-900">Primeira utiliza??o</h3>
+              <h3 class="text-base font-semibold text-slate-900">Primeira utilização</h3>
               <p class="mt-2 text-sm text-slate-600">
-                Os saldos das contas est?o vis?veis, mas o cart?o banc?rio decorativo s? aparece depois de registar um
-                cart?o de pagamento v?lido.
+                Os dados do cartão ficam guardados de forma segura. O número completo e o CVV não são armazenados no servidor.
               </p>
             </div>
           } @else {
             <div class="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 via-white to-emerald-50/40 p-6">
-              <h3 class="text-base font-semibold text-slate-900">Pr?ximas funcionalidades</h3>
+              <h3 class="text-base font-semibold text-slate-900">Próximas funcionalidades</h3>
               <ul class="mt-3 list-inside list-disc space-y-1.5 text-sm text-slate-600">
-                <li>Transfer?ncias imediatas e agendadas</li>
-                <li>Gest?o de cart?es e limites</li>
+                <li>Transferências imediatas e agendadas</li>
+                <li>Gestão de cartões e limites</li>
                 <li>Download de extrato em PDF</li>
-                <li>Notifica??es em tempo real de movimentos</li>
+                <li>Notificações em tempo real de movimentos</li>
               </ul>
             </div>
           }
@@ -287,13 +245,13 @@
         <a routerLink="/client/profile" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
           >Personalizar perfil</a
         >
-        ? Seguran?a da sess?o,
+        · Segurança da sessão,
         <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
           >Gestionar conta</a
         >
-        ?
+        ·
         <a routerLink="/client/settings" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
-          >Configura??es</a
+          >Configurações</a
         >.
       </p>
     </div>

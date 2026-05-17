@@ -28,7 +28,7 @@ export class ClientShellComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.title.setTitle('Cliente · Bank Management');
     if (isPlatformBrowser(this.platformId)) {
-      this.banking.loadFromApi();
+      this.banking.loadPaymentCardsFromApi();
       this.sidebarCollapsed.set(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
     }
   }

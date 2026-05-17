@@ -18,6 +18,8 @@ export interface ApiPaymentCard {
   holderName: string;
   cardNumberMasked: string;
   expiry: string;
+  balance: number;
+  currency: string;
   createdAt?: string;
 }
 

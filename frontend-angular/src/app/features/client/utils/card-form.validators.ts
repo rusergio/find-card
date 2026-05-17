@@ -35,6 +35,21 @@ export function cardNumberLuhnValidator(control: AbstractControl): ValidationErr
   return null;
 }
 
+export function expiryValidator(control: AbstractControl): ValidationErrors | null {
+  const mmYy = String(control.value ?? '').trim();
+  if (!mmYy) {
+    return null;
+  }
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(mmYy)) {
+    return { expiryFormat: true };
+  }
+  if (!isExpiryNotPast(mmYy)) {
+    return { expiryPast: true };
+  }
+  return null;
+}
+
+/** @deprecated Mantido para compatibilidade; preferir expiryValidator. */
 export function expiryGroupValidator(group: AbstractControl): ValidationErrors | null {
   const month = group.get('expiryMonth')?.value;
   const year = group.get('expiryYear')?.value;

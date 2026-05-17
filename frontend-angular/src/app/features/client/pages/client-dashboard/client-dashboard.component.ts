@@ -39,35 +39,34 @@ export class ClientDashboardComponent {
   protected readonly accountMenuOpen = signal(false);
 
   protected readonly operationForm = this.fb.nonNullable.group({
-    fromAccountId: ['', [Validators.required]],
-    toIban: [''],
+    fromCardId: ['', [Validators.required]],
     amount: [null as number | null, [Validators.required, Validators.min(0.01)]],
     note: [''],
   });
 
-  protected readonly accountOptions = this.banking.accounts;
+  protected readonly cardOptions = this.banking.paymentCards;
 
   private static readonly donutGeom = { cx: 100, cy: 100, rOuter: 78, rInner: 52 } as const;
   private static readonly sliceColors = ['#059669', '#14b8a6', '#64748b', '#6366f1', '#d97706'] as const;
 
   /** Segmentos do donut: parte de cada conta no saldo total. */
   protected readonly balanceDonutSlices = computed((): BalanceDonutSlice[] => {
-    const accounts = this.banking.accounts();
-    const total = accounts.reduce((s, a) => s + a.balance, 0);
-    if (total <= 0 || accounts.length === 0) {
+    const cards = this.banking.paymentCards();
+    const total = cards.reduce((s, c) => s + c.balance, 0);
+    if (cards.length === 0) {
       return [];
     }
     let t0 = 0;
-    return accounts.map((a, i) => {
-      const frac = a.balance / total;
+    return cards.map((card, i) => {
+      const frac = total > 0 ? card.balance / total : 1 / cards.length;
       const t1 = t0 + frac;
       const path = donutArcPath(ClientDashboardComponent.donutGeom, t0, t1);
       const color = ClientDashboardComponent.sliceColors[i % ClientDashboardComponent.sliceColors.length];
       const slice: BalanceDonutSlice = {
         path,
         color,
-        label: a.label,
-        balance: a.balance,
+        label: card.cardNumberMasked,
+        balance: card.balance,
         pct: frac * 100,
       };
       t0 = t1;
@@ -110,9 +109,9 @@ export class ClientDashboardComponent {
   });
 
   constructor() {
-    const first = this.banking.accounts()[0];
+    const first = this.banking.paymentCards()[0];
     if (first) {
-      this.operationForm.controls.fromAccountId.setValue(first.id);
+      this.operationForm.controls.fromCardId.setValue(first.id);
     }
   }
 
@@ -120,23 +119,20 @@ export class ClientDashboardComponent {
     this.operationMode.set(mode);
     this.operationError.set(null);
     this.operationSuccess.set(null);
-    if (mode === 'DEPOSIT') {
-      this.operationForm.controls.toIban.setValue('');
-    }
   }
 
-  protected selectedAccountLabel(): string {
-    const selectedId = this.operationForm.controls.fromAccountId.value;
-    const selected = this.accountOptions().find((opt) => opt.id === selectedId);
-    return selected?.label ?? 'Selecione a conta';
+  protected selectedCardLabel(): string {
+    const selectedId = this.operationForm.controls.fromCardId.value;
+    const selected = this.cardOptions().find((opt) => opt.id === selectedId);
+    return selected?.cardNumberMasked ?? 'Selecione o cartão';
   }
 
   protected toggleAccountMenu(): void {
     this.accountMenuOpen.update((open) => !open);
   }
 
-  protected selectAccount(id: string): void {
-    this.operationForm.controls.fromAccountId.setValue(id);
+  protected selectCard(id: string): void {
+    this.operationForm.controls.fromCardId.setValue(id);
     this.accountMenuOpen.set(false);
   }
 
@@ -150,15 +146,20 @@ export class ClientDashboardComponent {
     this.operationSuccess.set(null);
 
     const mode = this.operationMode();
-    const { fromAccountId, toIban, amount, note } = this.operationForm.getRawValue();
+    const { fromCardId, amount, note } = this.operationForm.getRawValue();
 
-    if (!fromAccountId || !amount || amount <= 0) {
+    if (!fromCardId || !amount || amount <= 0) {
       this.operationError.set('Preencha os campos obrigatórios corretamente.');
       return;
     }
 
+    if (!this.banking.hasRegisteredCard()) {
+      this.operationError.set('Registe um cartão em Contas antes de fazer operações.');
+      return;
+    }
+
     if (mode === 'DEPOSIT') {
-      const res = this.banking.deposit(fromAccountId, amount, note || undefined);
+      const res = this.banking.depositOnCard(fromCardId, amount, note || undefined);
       if (!res.ok) {
         this.operationError.set(res.error);
         return;
@@ -169,7 +170,7 @@ export class ClientDashboardComponent {
       return;
     }
 
-    const res = this.banking.transfer(fromAccountId, toIban || '', amount, note || undefined);
+    const res = this.banking.transferFromCard(fromCardId, amount, note || undefined);
     if (!res.ok) {
       this.operationError.set(res.error);
       return;
@@ -177,7 +178,6 @@ export class ClientDashboardComponent {
     this.operationSuccess.set('Transferência efetuada com sucesso.');
     this.operationForm.controls.amount.setValue(null);
     this.operationForm.controls.note.setValue('');
-    this.operationForm.controls.toIban.setValue('');
   }
 }
 

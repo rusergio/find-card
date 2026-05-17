@@ -3,4 +3,6 @@ export interface ClientPaymentCard {
   holderName: string;
   cardNumberMasked: string;
   expiry: string;
+  balance: number;
+  currency: string;
 }
