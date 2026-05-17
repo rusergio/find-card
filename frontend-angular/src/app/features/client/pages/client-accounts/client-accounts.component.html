@@ -13,20 +13,20 @@
   ></div>
 
   <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navega??o secund?ria">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm" aria-label="Navegação secundária">
       <a routerLink="/client" class="rounded-lg px-2 py-1 transition hover:bg-slate-200/80">Painel</a>
       <span aria-hidden="true">/</span>
-      <span class="rounded-lg bg-cyan-50 px-2 py-1 font-medium text-cyan-900 ring-1 ring-cyan-200/90">Contas e cart?es</span>
+      <span class="rounded-lg bg-cyan-50 px-2 py-1 font-medium text-cyan-900 ring-1 ring-cyan-200/90">Contas e cartões</span>
     </nav>
 
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Contas e cart?es</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Contas e cartões</h1>
         <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
           @if (banking.hasRegisteredCard()) {
-            Consulte saldos, IBAN e os seus cart?es registados.
+            Consulte saldos, IBAN e os seus cartões registados.
           } @else {
-            Registe o seu cart?o para ativar a visualiza??o em cart?o f?sico. At? l?, v? apenas os saldos das contas.
+            Registe o seu cartão para ativar a visualização em cartão físico. Até lá, vê apenas os saldos das contas.
           }
         </p>
       </div>
@@ -40,19 +40,19 @@
           <i class="pi pi-wallet text-2xl"></i>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">?rea de contas</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Área de contas</p>
           <p class="text-sm font-semibold text-slate-900">
             @if (banking.hasRegisteredCard()) {
-              Cart?o ativo
+              Cartão ativo
             } @else {
-              Cart?o pendente
+              Cartão pendente
             }
           </p>
           <p class="text-xs text-slate-500">
             @if (banking.hasRegisteredCard()) {
-              {{ banking.paymentCards().length }} cart?o(?es) registado(s).
+              {{ banking.paymentCards().length }} cartão(ões) registado(s).
             } @else {
-              Registe um cart?o para ver o design em cart?o banc?rio.
+              Registe um cartão para ver o design em cartão bancário.
             }
           </p>
         </div>
@@ -86,7 +86,7 @@
           >
             @if (!banking.hasRegisteredCard()) {
               <div class="border-b border-slate-100 bg-slate-50 px-6 py-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Conta banc?ria</p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Conta bancária</p>
                 <p class="mt-1 text-base font-semibold text-slate-900">{{ acc.label }}</p>
               </div>
             }
@@ -97,7 +97,7 @@
               }
               <div class="flex items-start justify-between gap-3">
                 <div>
-                  <p class="text-xs uppercase tracking-wide text-slate-500">Saldo dispon?vel</p>
+                  <p class="text-xs uppercase tracking-wide text-slate-500">Saldo disponível</p>
                   <p class="text-3xl font-semibold text-slate-900">
                     @if (isBalanceHidden(acc.id)) {
                       {{ maskedAmount(acc) }}
@@ -133,23 +133,23 @@
           <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-cyan-50/50 px-6 py-5 sm:px-8">
             <h2 class="text-lg font-semibold text-slate-900">
               @if (banking.hasRegisteredCard()) {
-                Registar outro cart?o
+                Registar outro cartão
               } @else {
-                Registar cart?o para pagamentos
+                Registar cartão para pagamentos
               }
             </h2>
             <p class="mt-1 text-sm text-slate-600">
               @if (banking.hasRegisteredCard()) {
-                Pode associar cart?es adicionais ? sua conta.
+                Pode associar cartões adicionais à sua conta.
               } @else {
-                Obrigat?rio na primeira utiliza??o ??? s? depois o cart?o aparece na ?rea de Contas.
+                Obrigatório na primeira utilização �?? s? depois o cartão aparece na Área de Contas.
               }
             </p>
           </div>
           <div class="p-6 sm:p-8">
             <form class="grid gap-4 sm:grid-cols-2" [formGroup]="cardForm" (ngSubmit)="submitCard()">
               <div class="sm:col-span-2">
-                <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cart?o</label>
+                <label for="holderName" class="mb-1.5 block text-sm font-medium text-slate-700">Nome no cartão</label>
                 <input
                   id="holderName"
                   type="text"
@@ -160,7 +160,7 @@
               </div>
 
               <div class="sm:col-span-2">
-                <label for="cardNumber" class="mb-1.5 block text-sm font-medium text-slate-700">N?mero do cart?o</label>
+                <label for="cardNumber" class="mb-1.5 block text-sm font-medium text-slate-700">Número do cartão</label>
                 <input
                   id="cardNumber"
                   type="text"
@@ -173,7 +173,7 @@
               </div>
 
               <div>
-                <label for="expiry" class="mb-1.5 block text-sm font-medium text-slate-700">Data de expira??o</label>
+                <label for="expiry" class="mb-1.5 block text-sm font-medium text-slate-700">Data de expiração</label>
                 <input
                   id="expiry"
                   type="text"
@@ -187,8 +187,8 @@
               <div>
                 <app-password-reveal-field
                   variant="inline"
-                  label="C?digo de seguran?a"
-                  labelAria="c?digo CVV"
+                  label="Código de segurança"
+                  labelAria="código CVV"
                   inputId="cvc"
                   [control]="cardForm.controls.cvc"
                   autocomplete="cc-csc"
@@ -197,7 +197,7 @@
                   inputMode="numeric"
                 />
                 @if (cardForm.controls.cvc.touched && cardForm.controls.cvc.invalid) {
-                  <p class="mt-1 text-xs text-rose-600">Indique 3 ou 4 d?gitos.</p>
+                  <p class="mt-1 text-xs text-rose-600">Indique 3 ou 4 dígitos.</p>
                 }
               </div>
 
@@ -212,7 +212,7 @@
                   class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:from-emerald-500 hover:to-teal-500 sm:w-auto"
                 >
                   <i class="pi pi-credit-card text-xs" aria-hidden="true"></i>
-                  Registar cart?o
+                  Registar cartão
                 </button>
               </div>
             </form>
@@ -221,10 +221,10 @@
 
         <div class="flex flex-col gap-6">
           <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/[0.04]">
-            <h3 class="text-base font-semibold text-slate-900">Cart�es registados</h3>
+            <h3 class="text-base font-semibold text-slate-900">Cart�es registados</h3>
             @if (!banking.hasRegisteredCard()) {
               <p class="mt-2 text-sm text-slate-600">
-                Ainda n?o registou nenhum cart?o. Preencha o formul?rio para desbloquear a visualiza??o em cart?o.
+                Ainda não registou nenhum cartão. Preencha o formulário para desbloquear a visualização em cartão.
               </p>
             } @else {
               <ul class="mt-3 space-y-3">
@@ -241,20 +241,20 @@
 
           @if (!banking.hasRegisteredCard()) {
             <div class="rounded-3xl border border-amber-200/90 bg-gradient-to-br from-amber-50 via-white to-orange-50/40 p-6">
-              <h3 class="text-base font-semibold text-slate-900">Primeira utiliza??o</h3>
+              <h3 class="text-base font-semibold text-slate-900">Primeira utilização</h3>
               <p class="mt-2 text-sm text-slate-600">
-                Os saldos das contas est?o vis?veis, mas o cart?o banc?rio decorativo s? aparece depois de registar um
-                cart?o de pagamento v?lido.
+                Os saldos das contas estão visíveis, mas o cartão bancário decorativo só aparece depois de registar um
+                cartão de pagamento válido.
               </p>
             </div>
           } @else {
             <div class="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 via-white to-emerald-50/40 p-6">
-              <h3 class="text-base font-semibold text-slate-900">Pr?ximas funcionalidades</h3>
+              <h3 class="text-base font-semibold text-slate-900">Próximas funcionalidades</h3>
               <ul class="mt-3 list-inside list-disc space-y-1.5 text-sm text-slate-600">
-                <li>Transfer?ncias imediatas e agendadas</li>
-                <li>Gest?o de cart?es e limites</li>
+                <li>Transferências imediatas e agendadas</li>
+                <li>Gestão de cartões e limites</li>
                 <li>Download de extrato em PDF</li>
-                <li>Notifica??es em tempo real de movimentos</li>
+                <li>Notificações em tempo real de movimentos</li>
               </ul>
             </div>
           }
@@ -266,13 +266,11 @@
         <a routerLink="/client/profile" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
           >Personalizar perfil</a
         >
-        ? Seguran?a da sess?o,
+        ? Seguran?a da sessão,
         <a routerLink="/client/account-management" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
           >Gestionar conta</a
-        >
-        ?
-        <a routerLink="/client/settings" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
-          >Configura??es</a
+        > · <a routerLink="/client/settings" class="font-semibold text-emerald-700 underline-offset-4 hover:underline"
+          >Configura��es</a
         >.
       </p>
     </div>
